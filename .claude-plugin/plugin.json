@@ -1,0 +1,28 @@
+{
+  "name": "qa-toolkit",
+  "version": "1.0.0",
+  "description": "Claude Code plugin for QA testers. Structured PR reviews, test case generation, bug reports, regression planning, and 6 more QA workflows. Auto-detects your tech stack. No code required.",
+  "author": {
+    "name": "QA Skills"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cyberwalk3r/qa-toolkit"
+  },
+  "homepage": "https://github.com/cyberwalk3r/qa-toolkit#readme",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "qa",
+    "testing",
+    "quality-assurance",
+    "pr-review",
+    "bug-report",
+    "test-cases",
+    "regression",
+    "accessibility",
+    "e2e-testing",
+    "playwright"
+  ],
+  "license": "MIT"
+}

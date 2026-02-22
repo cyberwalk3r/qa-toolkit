@@ -1,0 +1,19 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+desktop.ini
+ehthumbs.db
+
+# Generated at runtime in target projects
+qa-artifacts/

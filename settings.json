@@ -1,3 +1,5 @@
 {
-    "agent": "qa-reviewer"
+    "agent": "qa-reviewer",
+    "outputDir": "qa-artifacts",
+    "hooksEnabled": true
 }

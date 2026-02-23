@@ -14,7 +14,23 @@ const fs = require('fs');
 const path = require('path');
 
 const projectRoot = process.cwd();
-const configDir = path.join(projectRoot, 'qa-artifacts');
+
+// Read plugin settings
+const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || path.join(__dirname, '..');
+let outputDir = 'qa-artifacts';
+try {
+    const settings = JSON.parse(fs.readFileSync(path.join(pluginRoot, 'settings.json'), 'utf8'));
+    if (settings.outputDir) {
+        if (path.isAbsolute(settings.outputDir) || settings.outputDir.includes('..')) {
+            console.error('Error: outputDir must be a relative path without ".." components');
+            process.exit(1);
+        }
+        outputDir = settings.outputDir;
+    }
+    if (settings.hooksEnabled === false) process.exit(0);
+} catch { /* use default */ }
+
+const configDir = path.join(projectRoot, outputDir);
 const configPath = path.join(configDir, '.qa-config.json');
 
 // If config already exists and is recent (< 24h), just output it
@@ -50,40 +66,6 @@ const detectors = {
         { marker: 'Package.swift', lang: 'Swift' },
         { marker: 'pubspec.yaml', lang: 'Dart/Flutter' },
     ],
-    frameworks: [
-        { check: 'package.json', key: 'react', name: 'React' },
-        { check: 'package.json', key: 'next', name: 'Next.js' },
-        { check: 'package.json', key: 'vue', name: 'Vue.js' },
-        { check: 'package.json', key: 'nuxt', name: 'Nuxt' },
-        { check: 'package.json', key: 'angular', name: 'Angular' },
-        { check: 'package.json', key: 'svelte', name: 'Svelte' },
-        { check: 'package.json', key: 'express', name: 'Express.js' },
-        { check: 'package.json', key: 'fastify', name: 'Fastify' },
-        { check: 'package.json', key: 'nestjs', name: 'NestJS' },
-        { check: 'requirements.txt', key: 'django', name: 'Django' },
-        { check: 'requirements.txt', key: 'flask', name: 'Flask' },
-        { check: 'requirements.txt', key: 'fastapi', name: 'FastAPI' },
-    ],
-    testFrameworks: [
-        { check: 'package.json', key: 'jest', name: 'Jest' },
-        { check: 'package.json', key: 'vitest', name: 'Vitest' },
-        { check: 'package.json', key: 'mocha', name: 'Mocha' },
-        { check: 'package.json', key: 'playwright', name: 'Playwright' },
-        { check: 'package.json', key: 'cypress', name: 'Cypress' },
-        { check: 'package.json', key: 'testing-library', name: 'Testing Library' },
-        { check: 'requirements.txt', key: 'pytest', name: 'Pytest' },
-        { check: 'requirements.txt', key: 'unittest', name: 'unittest' },
-        { check: 'requirements.txt', key: 'selenium', name: 'Selenium' },
-        { marker: 'pytest.ini', name: 'Pytest' },
-        { marker: 'setup.cfg', key: '[tool:pytest]', name: 'Pytest' },
-        { marker: 'jest.config.js', name: 'Jest' },
-        { marker: 'jest.config.ts', name: 'Jest' },
-        { marker: 'vitest.config.ts', name: 'Vitest' },
-        { marker: 'playwright.config.ts', name: 'Playwright' },
-        { marker: 'playwright.config.js', name: 'Playwright' },
-        { marker: 'cypress.config.js', name: 'Cypress' },
-        { marker: 'cypress.config.ts', name: 'Cypress' },
-    ],
     cicd: [
         { marker: '.github/workflows', name: 'GitHub Actions', isDir: true },
         { marker: '.gitlab-ci.yml', name: 'GitLab CI' },
@@ -116,24 +98,56 @@ function dirExists(name) {
     return fs.existsSync(p) && fs.statSync(p).isDirectory();
 }
 
-function hasGlobMatch(pattern) {
+// Scan immediate subdirectories for marker files (monorepo support)
+function getSubdirs() {
     try {
-        const ext = pattern.replace('*', '');
-        const files = fs.readdirSync(projectRoot);
-        return files.some(f => f.endsWith(ext));
-    } catch { return false; }
+        return fs.readdirSync(projectRoot, { withFileTypes: true })
+            .filter(e => e.isDirectory() && !e.name.startsWith('.') && e.name !== 'node_modules' && e.name !== outputDir)
+            .map(e => e.name);
+    } catch { return []; }
 }
 
-function readFileContent(name) {
-    try {
-        return fs.readFileSync(path.join(projectRoot, name), 'utf8').toLowerCase();
-    } catch { return ''; }
+function findFileInSubdirs(name) {
+    if (fileExists(name)) return path.join(projectRoot, name);
+    for (const sub of getSubdirs()) {
+        const p = path.join(projectRoot, sub, name);
+        if (fs.existsSync(p)) return p;
+    }
+    return null;
+}
+
+function findAllInSubdirs(name) {
+    const results = [];
+    if (fileExists(name)) results.push(path.join(projectRoot, name));
+    for (const sub of getSubdirs()) {
+        const p = path.join(projectRoot, sub, name);
+        if (fs.existsSync(p)) results.push(p);
+    }
+    return results;
+}
+
+function hasGlobMatch(pattern) {
+    const ext = pattern.replace('*', '');
+    function search(dir, depth) {
+        if (depth > 3) return false;
+        try {
+            const entries = fs.readdirSync(dir, { withFileTypes: true });
+            for (const entry of entries) {
+                if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+                if (entry.isFile() && entry.name.endsWith(ext)) return true;
+                if (entry.isDirectory() && search(path.join(dir, entry.name), depth + 1)) return true;
+            }
+        } catch { /* skip unreadable dirs */ }
+        return false;
+    }
+    return search(projectRoot, 0);
 }
 
 // Detect everything
 const config = {
     detectedAt: new Date().toISOString(),
     projectRoot,
+    outputDir,
     languages: [],
     frameworks: [],
     testFrameworks: [],
@@ -180,21 +194,29 @@ if (config.hasClaudeMd) {
     } catch { }
 }
 
-// Check for existing test directories
+// Check for existing test directories (root + subdirs)
 const testDirMarkers = ['__tests__', 'tests', 'test', 'spec', 'specs', 'e2e', 'integration-tests'];
-config.existingTestDirs = testDirMarkers.filter(d => dirExists(d));
+const foundTestDirs = new Set();
+for (const d of testDirMarkers) {
+    if (dirExists(d)) foundTestDirs.add(d);
+    for (const sub of getSubdirs()) {
+        if (dirExists(path.join(sub, d))) foundTestDirs.add(`${sub}/${d}`);
+    }
+}
+config.existingTestDirs = [...foundTestDirs];
 
-// Languages
+// Languages (search root + immediate subdirectories for monorepo support)
 for (const d of detectors.languages) {
-    if (d.glob ? hasGlobMatch(d.marker) : fileExists(d.marker)) {
+    const found = d.glob ? hasGlobMatch(d.marker) : findFileInSubdirs(d.marker);
+    if (found) {
         if (!config.languages.includes(d.lang)) config.languages.push(d.lang);
     }
 }
 
 // Frameworks & test frameworks — proper parsing, not substring matching
-function getPackageDeps(filePath) {
+function getPackageDeps(absPath) {
     try {
-        const raw = fs.readFileSync(path.join(projectRoot, filePath), 'utf8');
+        const raw = fs.readFileSync(absPath, 'utf8');
         const pkg = JSON.parse(raw);
         const allDeps = {
             ...pkg.dependencies,
@@ -205,27 +227,48 @@ function getPackageDeps(filePath) {
     } catch { return []; }
 }
 
-function getPythonDeps(filePath) {
+function getPythonDeps(absPath) {
     try {
-        const content = fs.readFileSync(path.join(projectRoot, filePath), 'utf8');
+        const content = fs.readFileSync(absPath, 'utf8');
         return content.split('\n')
             .map(line => line.trim().split(/[=<>!~\[;#]/)[0].trim().toLowerCase())
             .filter(Boolean);
     } catch { return []; }
 }
 
-const jsDeps = getPackageDeps('package.json');
+// Aggregate deps from root + subdirectories (monorepo support)
+const jsDeps = findAllInSubdirs('package.json').flatMap(p => getPackageDeps(p));
 const pyDeps = [
-    ...getPythonDeps('requirements.txt'),
-    ...getPythonDeps('requirements-dev.txt'),
+    ...findAllInSubdirs('requirements.txt').flatMap(p => getPythonDeps(p)),
+    ...findAllInSubdirs('requirements-dev.txt').flatMap(p => getPythonDeps(p)),
 ];
 
-// Check pyproject.toml dependencies too
-try {
-    const pyproject = fs.readFileSync(path.join(projectRoot, 'pyproject.toml'), 'utf8').toLowerCase();
-    const depMatches = pyproject.match(/["']([a-z0-9_-]+)["']/g) || [];
-    pyDeps.push(...depMatches.map(m => m.replace(/["']/g, '')));
-} catch { }
+// Check pyproject.toml dependencies — section-aware parsing (root + subdirs)
+for (const pyprojectPath of findAllInSubdirs('pyproject.toml')) {
+    try {
+        const pyproject = fs.readFileSync(pyprojectPath, 'utf8');
+        const lines = pyproject.split('\n');
+        let inDepSection = false;
+        const depSections = [
+            '[project.dependencies]',
+            '[project.optional-dependencies',
+            '[tool.poetry.dependencies]',
+            '[tool.poetry.dev-dependencies]',
+            '[tool.poetry.group.',
+        ];
+        for (const line of lines) {
+            const trimmed = line.trim().toLowerCase();
+            if (trimmed.startsWith('[')) {
+                inDepSection = depSections.some(s => trimmed.startsWith(s));
+                continue;
+            }
+            if (inDepSection && trimmed && !trimmed.startsWith('#')) {
+                const match = trimmed.match(/^["']?([a-z0-9_-]+)/);
+                if (match) pyDeps.push(match[1]);
+            }
+        }
+    } catch { }
+}
 
 const frameworkChecks = [
     { deps: jsDeps, key: 'react', name: 'React', exclude: ['react-native'] },
@@ -281,7 +324,7 @@ const testMarkerFiles = [
 ];
 
 for (const m of testMarkerFiles) {
-    if (fileExists(m.marker) && !config.testFrameworks.includes(m.name)) {
+    if (findFileInSubdirs(m.marker) && !config.testFrameworks.includes(m.name)) {
         config.testFrameworks.push(m.name);
     }
 }
@@ -293,9 +336,9 @@ for (const d of detectors.cicd) {
     }
 }
 
-// Package manager
+// Package manager (search root + subdirs)
 for (const d of detectors.packageManagers) {
-    if (fileExists(d.marker)) { config.packageManager = d.name; break; }
+    if (findFileInSubdirs(d.marker)) { config.packageManager = d.name; break; }
 }
 
 // Save config
@@ -303,17 +346,6 @@ if (!fs.existsSync(configDir)) {
     fs.mkdirSync(configDir, { recursive: true });
 }
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
-
-// Create artifact subdirectories
-const artifactDirs = [
-    'pr-reviews', 'bug-reports', 'test-cases', 'api-tests',
-    'regression-plans', 'test-data', 'a11y-audits',
-    'release-assessments', 'e2e-tests'
-];
-for (const dir of artifactDirs) {
-    const dirPath = path.join(configDir, dir);
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
-}
 
 outputContext(config);
 
@@ -365,7 +397,8 @@ function outputContext(cfg) {
         const docTypes = cfg.existingDocs.map(d => d.type).join(', ');
         lines.push(`Existing Docs: ${docTypes}`);
     }
-    lines.push(`Config: qa-artifacts/.qa-config.json`);
+    lines.push(`Config: ${outputDir}/.qa-config.json`);
+    lines.push(`Output Directory: ${outputDir}/`);
 
     // Scan for existing QA work
     const artifacts = scanArtifacts();
@@ -375,7 +408,7 @@ function outputContext(cfg) {
         lines.push('[Previous QA Work]');
         for (const label of artifactKeys) {
             const { count, latest, dir } = artifacts[label];
-            lines.push(`  ${label}: ${count} file${count > 1 ? 's' : ''} (latest: ${latest}) → qa-artifacts/${dir}/`);
+            lines.push(`  ${label}: ${count} file${count > 1 ? 's' : ''} (latest: ${latest}) → ${outputDir}/${dir}/`);
         }
         lines.push('Read files from these directories for context on previous QA decisions.');
     } else {

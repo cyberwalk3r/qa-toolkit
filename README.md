@@ -46,6 +46,21 @@ Three QA personas available via `/agents`:
 - **qa-explorer** — Generates edge cases and exploratory test charters from feature descriptions
 - **qa-lead** — Makes release decisions, plans regression scope, produces executive summaries
 
+## Agents vs Skills
+
+**Skills** (`/qa-toolkit:*`) produce **one-shot structured output** — you describe what you need, you get a formatted artifact saved to disk. Use these for specific deliverables: a PR review, a bug report, a test plan.
+
+**Agents** are **conversational personas** for multi-turn interactive work. Use these when you want an ongoing QA discussion: "walk me through this PR," "help me explore edge cases for this feature," "let's assess whether we're ready to release." Agents remember context across the conversation and adapt their guidance as you share more information.
+
+| Need | Use |
+|------|-----|
+| Structured PR review document | `/qa-toolkit:pr-review` (skill) |
+| Interactive PR walkthrough with Q&A | `qa-reviewer` (agent) |
+| Bug report from a description | `/qa-toolkit:bug-report` (skill) |
+| Brainstorm what could break in a feature | `qa-explorer` (agent) |
+| Go/no-go release document | `/qa-toolkit:release-readiness` (skill) |
+| Strategic release planning discussion | `qa-lead` (agent) |
+
 ## Install
 
 ```bash
@@ -69,11 +84,12 @@ QA testers and team leads who:
 
 ## Output
 
-Everything is saved to `qa-artifacts/` in your project root:
+Everything is saved to `qa-artifacts/` in your project root (configurable via `settings.json`):
 
 ```
 qa-artifacts/
 ├── .qa-config.json          # Auto-detected project config
+├── .qa-activity.log         # Session activity log
 ├── pr-reviews/              # PR review reports
 ├── bug-reports/             # Structured bug reports
 ├── test-cases/              # Generated test cases
@@ -84,6 +100,50 @@ qa-artifacts/
 ├── release-assessments/     # Go/no-go assessments
 └── e2e-tests/               # Playwright test scaffolds
 ```
+
+### .qa-config.json Schema
+
+The auto-detection hook writes a config file with the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `detectedAt` | string | ISO 8601 timestamp of detection |
+| `projectRoot` | string | Absolute path to the project directory |
+| `outputDir` | string | Configured output directory name |
+| `languages` | string[] | Detected languages (e.g., "JavaScript/TypeScript", "Python") |
+| `frameworks` | string[] | Detected frameworks (e.g., "React", "FastAPI") |
+| `testFrameworks` | string[] | Detected test tools (e.g., "Jest", "Playwright") |
+| `cicd` | string[] | Detected CI/CD systems |
+| `packageManager` | string\|null | Detected package manager |
+| `hasClaudeMd` | boolean | Whether CLAUDE.md exists |
+| `hasReadme` | boolean | Whether README.md exists |
+| `existingDocs` | object[] | Detected documentation files with `path` and `type` |
+| `existingTestDirs` | string[] | Detected test directories |
+| `existingQaConfig.claudeMdSummary` | string | First 50 lines of CLAUDE.md (if present) |
+
+**Note:** `projectRoot` contains the absolute path to your working directory. If your `.qa-config.json` is committed to version control, be aware this value is machine-specific. The config is cached for 24 hours; delete it to force re-detection.
+
+## Permissions & Side Effects
+
+The plugin ships a `.claude/settings.local.json` that pre-approves `Bash(git:*)` for git operations used by the PR review skill. This is Claude Code's standard permission mechanism — you'll see these permissions listed when you install the plugin and can revoke them at any time. No other elevated permissions are requested.
+
+**Automatic behavior (hooks):**
+- **On session start:** Scans your project for marker files (`package.json`, `requirements.txt`, etc.) to detect your tech stack. Creates `qa-artifacts/.qa-config.json` with the results. No network calls.
+- **On session end:** Logs which artifacts were created/modified during the session to `qa-artifacts/.qa-activity.log`. No network calls.
+
+Both hooks only read project marker files and write to the `qa-artifacts/` directory. No files outside that directory are created or modified.
+
+**To disable hooks** without removing the plugin, set `"hooksEnabled": false` in the plugin's `settings.json`:
+
+```json
+{
+    "agent": "qa-reviewer",
+    "outputDir": "qa-artifacts",
+    "hooksEnabled": false
+}
+```
+
+All slash commands and agents continue to work — only the automatic detection and activity logging are disabled.
 
 ## Works With Your Existing Setup
 

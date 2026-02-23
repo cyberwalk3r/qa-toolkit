@@ -19,8 +19,7 @@
  *   node run-test.js --browser firefox --report qa-artifacts/e2e-tests/*.spec.js
  */
 
-const { execSync } = require('child_process');
-const path = require('path');
+const { execFileSync } = require('child_process');
 
 const args = process.argv.slice(2);
 
@@ -54,6 +53,12 @@ const report = args.includes('--report');
 const browserIdx = args.indexOf('--browser');
 const browser = browserIdx >= 0 ? args[browserIdx + 1] : 'chromium';
 
+const validBrowsers = ['chromium', 'firefox', 'webkit'];
+if (!validBrowsers.includes(browser)) {
+    console.error(`Error: Invalid browser "${browser}". Must be one of: ${validBrowsers.join(', ')}`);
+    process.exit(1);
+}
+
 // Get test files (everything that's not a flag)
 const flagsWithValues = new Set(['--browser']);
 const testFiles = args.filter((arg, i) => {
@@ -67,18 +72,17 @@ if (testFiles.length === 0) {
     process.exit(1);
 }
 
-// Build Playwright command
-let cmd = `npx playwright test ${testFiles.join(' ')}`;
-cmd += ` --project=${browser}`;
-if (headed) cmd += ' --headed';
-if (slow) cmd += ' --slow-mo=1000';
-if (debug) cmd += ' --debug';
-if (report) cmd += ' --reporter=html';
+// Build Playwright arguments (array form to avoid shell injection)
+const playwrightArgs = ['playwright', 'test', ...testFiles, `--project=${browser}`];
+if (headed) playwrightArgs.push('--headed');
+if (slow) playwrightArgs.push('--slow-mo=1000');
+if (debug) playwrightArgs.push('--debug');
+if (report) playwrightArgs.push('--reporter=html');
 
-console.log(`Running: ${cmd}\n`);
+console.log(`Running: npx ${playwrightArgs.join(' ')}\n`);
 
 try {
-    execSync(cmd, { stdio: 'inherit', cwd: process.cwd() });
+    execFileSync('npx', playwrightArgs, { stdio: 'inherit', cwd: process.cwd() });
 } catch (err) {
     process.exit(err.status || 1);
 }

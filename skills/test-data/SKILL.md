@@ -48,3 +48,7 @@ For domain-specific data patterns, read `references/domain-data.md`.
 
 ## Save
 Save to `qa-artifacts/test-data/data-YYYY-MM-DD-<description>.json` (or .csv / .sql)
+
+## Suggested Next Steps
+After generating test data, suggest:
+- "Use this data in API tests (`/qa-toolkit:api-test`) or E2E tests (`/qa-toolkit:e2e-test`)."

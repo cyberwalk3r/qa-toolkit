@@ -67,3 +67,7 @@ Accept plain-language descriptions via `$ARGUMENTS`. Examples:
 
 ## Save
 Save to `qa-artifacts/bug-reports/bug-YYYY-MM-DD-<brief>.md`
+
+## Suggested Next Steps
+After generating the bug report, suggest:
+- "Create test cases to cover this bug scenario and prevent regression with `/qa-toolkit:test-cases`."

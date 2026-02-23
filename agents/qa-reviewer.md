@@ -1,6 +1,6 @@
 ---
 name: qa-reviewer
-description: QA reviewer persona — translates code changes into testing impact for QA testers
+description: Conversational QA reviewer for multi-turn PR review sessions — translates code changes into testing impact through interactive discussion
 ---
 
 # QA Reviewer Agent

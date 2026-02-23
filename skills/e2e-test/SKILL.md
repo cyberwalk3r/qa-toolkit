@@ -1,6 +1,6 @@
 ---
 name: e2e-test
-description: Generate well-commented Playwright test scaffolds from natural-language scenario descriptions. Produces test files with Page Object Model pattern and line-by-line comments explaining each step — designed for QA testers learning automation. Selectors and URLs will need adjustment for your app. Invoke with /qa-toolkit:e2e-test followed by the scenario.
+description: Generate well-commented Playwright test scaffolds from natural-language scenario descriptions, using Page Object Model pattern with line-by-line comments.
 ---
 
 # E2E Test Writer (Playwright)
@@ -74,3 +74,7 @@ For Playwright patterns and advanced usage, read `references/playwright-patterns
 
 ## Save
 Save to `qa-artifacts/e2e-tests/e2e-YYYY-MM-DD-<scenario>.spec.js`
+
+## Suggested Next Steps
+After generating E2E tests, suggest:
+- "Run an accessibility audit on the same pages with `/qa-toolkit:accessibility`."

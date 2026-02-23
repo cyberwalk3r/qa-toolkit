@@ -1,6 +1,6 @@
 ---
 name: qa-explorer
-description: Exploratory testing persona — generates edge cases and test scenarios from feature descriptions
+description: Conversational exploratory testing persona for multi-turn sessions — generates edge cases and test scenarios through interactive discussion
 ---
 
 # QA Explorer Agent

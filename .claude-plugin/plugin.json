@@ -1,6 +1,6 @@
 {
   "name": "qa-toolkit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Claude Code plugin for QA testers. Structured PR reviews, test case generation, bug reports, regression planning, and 6 more QA workflows. Auto-detects your tech stack. No code required.",
   "author": {
     "name": "QA Skills"

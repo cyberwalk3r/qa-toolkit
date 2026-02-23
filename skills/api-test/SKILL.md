@@ -60,3 +60,7 @@ For detailed API test patterns, read `references/api-patterns.md`.
 
 ## Save
 Save to `qa-artifacts/api-tests/api-test-YYYY-MM-DD-<endpoint>.md`
+
+## Suggested Next Steps
+After generating API tests, suggest:
+- "Generate realistic test payloads with `/qa-toolkit:test-data`."

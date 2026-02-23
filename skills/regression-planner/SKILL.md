@@ -56,3 +56,7 @@ For detailed impact analysis heuristics, read `references/impact-analysis.md`.
 
 ## Save
 Save to `qa-artifacts/regression-plans/regression-YYYY-MM-DD-<brief>.md`
+
+## Suggested Next Steps
+After generating the regression plan, suggest:
+- "When regression testing is complete, assess release readiness with `/qa-toolkit:release-readiness`."

@@ -61,3 +61,7 @@ For manual test procedures, read `references/manual-tests.md`.
 
 ## Save
 Save to `qa-artifacts/a11y-audits/a11y-YYYY-MM-DD-<page>.md`
+
+## Suggested Next Steps
+After generating the audit, suggest:
+- "File each critical/major finding as a bug report with `/qa-toolkit:bug-report`."

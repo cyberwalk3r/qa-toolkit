@@ -1,6 +1,6 @@
 ---
 name: qa-lead
-description: QA lead persona — release decisions, quality metrics, and strategic test planning
+description: Conversational QA lead for multi-turn strategic sessions — release decisions, quality metrics, and test planning through interactive discussion
 ---
 
 # QA Lead Agent

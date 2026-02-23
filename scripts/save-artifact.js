@@ -3,7 +3,7 @@
 /**
  * QA Toolkit — Artifact Persistence Script
  * 
- * Runs on TaskCompleted to log completed QA task metadata
+ * Runs on Stop to log completed QA task metadata
  * for activity tracking and metrics reporting.
  */
 
@@ -11,7 +11,23 @@ const fs = require('fs');
 const path = require('path');
 
 const projectRoot = process.cwd();
-const configDir = path.join(projectRoot, 'qa-artifacts');
+
+// Read plugin settings
+const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || path.join(__dirname, '..');
+let outputDir = 'qa-artifacts';
+try {
+    const settings = JSON.parse(fs.readFileSync(path.join(pluginRoot, 'settings.json'), 'utf8'));
+    if (settings.outputDir) {
+        if (path.isAbsolute(settings.outputDir) || settings.outputDir.includes('..')) {
+            console.error('Error: outputDir must be a relative path without ".." components');
+            process.exit(1);
+        }
+        outputDir = settings.outputDir;
+    }
+    if (settings.hooksEnabled === false) process.exit(0);
+} catch { /* use default */ }
+
+const configDir = path.join(projectRoot, outputDir);
 const logPath = path.join(configDir, '.qa-activity.log');
 
 // Ensure directory exists

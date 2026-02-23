@@ -56,3 +56,8 @@ Save to `qa-artifacts/pr-reviews/pr-review-YYYY-MM-DD-<brief>.md`
 ## Adapting
 For detailed risk patterns by tech stack, read `references/risk-patterns.md`.
 For detailed review criteria by change type, read `references/review-criteria.md`.
+
+## Suggested Next Steps
+After generating the review, suggest based on results:
+- If Risk Level is **Medium or higher**: "Consider running `/qa-toolkit:regression-planner` to map the impact radius and plan targeted regression testing."
+- Always: "Generate test cases for the changed functionality with `/qa-toolkit:test-cases`."

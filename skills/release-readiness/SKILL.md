@@ -70,3 +70,7 @@ For release type templates, read `references/release-types.md`.
 
 ## Save
 Save to `qa-artifacts/release-assessments/release-YYYY-MM-DD-<version>.md`
+
+## Suggested Next Steps
+After generating the assessment, suggest based on results:
+- If verdict is **NO-GO** or Regression Score is below 70: "Plan targeted regression testing with `/qa-toolkit:regression-planner`."

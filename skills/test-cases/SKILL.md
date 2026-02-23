@@ -62,3 +62,8 @@ Link each test case back to the original requirement with a reference tag.
 
 ## Save
 Save to `qa-artifacts/test-cases/tc-YYYY-MM-DD-<feature>.md`
+
+## Suggested Next Steps
+After generating test cases, suggest:
+- "Generate synthetic test data for these scenarios with `/qa-toolkit:test-data`."
+- "Automate the P0/P1 cases as Playwright E2E tests with `/qa-toolkit:e2e-test`."

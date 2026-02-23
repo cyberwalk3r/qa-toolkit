@@ -5,8 +5,9 @@
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
 3. Make your changes
-4. Test locally: `claude --plugin-dir ./qa-toolkit`
-5. Submit a pull request
+4. Run the test suite: `node --test tests/*.test.js`
+5. Test locally: `claude --plugin-dir ./qa-toolkit`
+6. Submit a pull request
 
 ## Adding a New Skill
 

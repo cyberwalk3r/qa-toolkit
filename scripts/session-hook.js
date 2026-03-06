@@ -5,7 +5,7 @@
  *
  * Runs on Stop to promote session findings to project state,
  * archive the completed session, and log activity. Replaces
- * save-artifact.js with expanded state-aware functionality.
+ * the original save-artifact.js with expanded state-aware functionality.
  *
  * Each section (promote, archive, log) is independent -- a failure
  * in one does not prevent the others from running.

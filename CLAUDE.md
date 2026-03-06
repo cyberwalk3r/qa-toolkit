@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Claude Code plugin providing 10 QA skills (slash commands) and 3 agent personas. Auto-detects project tech stack and produces structured QA artifacts.
+A Claude Code plugin providing 15 QA skills (slash commands) and 3 agent personas. Auto-detects project tech stack and produces structured QA artifacts.
 
 ## Project Structure
 
@@ -11,7 +11,7 @@ A Claude Code plugin providing 10 QA skills (slash commands) and 3 agent persona
 settings.json               — Default agent and plugin settings
 hooks/hooks.json            — Event hooks (SessionStart, Stop)
 scripts/detect-project.js   — Auto-detection script (runs on SessionStart)
-scripts/save-artifact.js    — Activity logger (runs on Stop)
+scripts/session-hook.js     — State promotion, archival, activity logger (runs on Stop)
 agents/<name>.md            — Agent persona definitions (conversational, multi-turn)
 skills/<name>/SKILL.md      — Skill definitions (one-shot structured output)
 skills/<name>/references/   — Domain-specific knowledge files

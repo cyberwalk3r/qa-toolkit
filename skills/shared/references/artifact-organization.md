@@ -91,7 +91,7 @@ Existing flat artifact directories (`qa-artifacts/test-cases/`, `qa-artifacts/bu
 
 - Old artifacts stay where they are
 - New artifacts use context-based paths when context is available
-- The `save-artifact.js` hook scans recursively, detecting artifacts in both flat and context-prefixed structures
+- The `session-hook.js` Stop hook scans recursively, detecting artifacts in both flat and context-prefixed structures
 - No cleanup or migration scripts are needed
 
 ## Integration with State Manager

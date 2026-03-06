@@ -32,6 +32,41 @@ So I built QA Toolkit. It auto-detects your stack, remembers your project contex
 
 ---
 
+## Quick Start
+
+```bash
+# 1. Install
+claude plugin add github:cyberwalk3r/qa-toolkit
+
+# 2. Open any project — detection runs automatically
+
+# 3. Confirm your setup (recommended first command)
+/qa-toolkit:setup
+```
+
+After setup, try `/qa-toolkit:pr-review` on a real PR or `/qa-toolkit:test-cases` with a feature description. Each skill output includes **Suggested Next Steps** pointing you to related commands.
+
+All output lands in `qa-artifacts/` — add it to `.gitignore` if you don't want to commit QA artifacts.
+
+### Recommended Workflow
+
+Skills are most powerful when chained. Each one feeds context into the next:
+
+```mermaid
+graph LR
+    setup --> pr-review
+    pr-review --> regression-planner
+    regression-planner --> release-readiness
+    pr-review --> bug-report
+    regression-planner --> test-cases
+    test-cases --> e2e-test
+    test-cases --> test-data
+```
+
+Start anywhere — every skill works standalone — but chaining builds richer context.
+
+---
+
 ## How It Works
 
 **1. Install the plugin**
@@ -104,6 +139,8 @@ Agents remember context across the conversation. The more you share, the sharper
 **Skills** (`/qa-toolkit:*`) produce **one-shot structured artifacts** — saved to disk, formatted, done.
 
 **Agents** are **conversational** — use them for ongoing discussion, decision-making, and exploratory work.
+
+> **When to pick an agent:** Use `qa-reviewer` when walking through a PR interactively. Use `qa-explorer` when brainstorming edge cases for a feature. Use `qa-lead` when deciding whether a release is ready to ship. If you want a saved artifact instead of a conversation, use the corresponding skill.
 
 ---
 

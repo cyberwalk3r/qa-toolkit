@@ -5,7 +5,7 @@
 QA Toolkit v2.0 is a ground-up rethink of how the plugin operates. The core idea: every skill now reads your project state before producing output, so artifacts build on each other rather than starting cold every time.
 
 ### Added
-- **State-aware skill system** — all skills read `.qa-config.json` on invocation, adapt output to detected stack, and write findings back so subsequent skills have context
+- **State-aware skill system** — all skills read `.qa-context.json` on invocation, adapt output to detected stack, and write findings back so subsequent skills have context
 - **Shared references** (`skills/shared/references/`) — `context-preamble.md`, `state-integration.md`, `output-formats.md`, `artifact-organization.md` loaded by all skills to enforce consistent behavior
 - **5 new skills**: `test-plan`, `exploratory-testing`, `coverage-gap`, `risk-prioritization`, `flaky-test-diagnosis`
 - **Multi-format output** — skills produce output in the format best suited to the artifact type (Markdown reports, Gherkin, cURL/Postman/Playwright, JSON/CSV/SQL, etc.)
@@ -37,7 +37,7 @@ QA Toolkit v2.0 is a ground-up rethink of how the plugin operates. The core idea
 - `hooksEnabled` toggle to disable hooks without removing the plugin
 - 27 automated tests using Node.js built-in test runner (zero dependencies)
 - GitHub Actions CI workflow running tests on Node 18/20/22
-- `.qa-config.json` schema documentation in README
+- `.qa-context.json` schema documentation in README
 - `.gitignore` suggestion step in setup skill workflow
 - "Permissions & Side Effects" section in README with `Bash(git:*)` mechanism explained
 - Contextual "Suggested Next Steps" cross-references in all skills

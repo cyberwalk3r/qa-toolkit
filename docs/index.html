@@ -60,6 +60,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#1e1e1e',
+        primaryTextColor: '#e5e7eb',
+        primaryBorderColor: '#f59e0b',
+        lineColor: '#f59e0b',
+        secondaryColor: '#171717',
+        tertiaryColor: '#111111',
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '14px'
+      }
+    });
+  </script>
 </head>
 <body>
 
@@ -73,6 +90,7 @@
   <span class="logo">/qa-toolkit</span>
   <div class="nav-links">
     <a href="#how-it-works">How It Works</a>
+    <a href="#workflow">Workflow</a>
     <a href="#commands">Commands</a>
     <a href="#agents">Agents</a>
     <a href="#install">Install</a>
@@ -188,6 +206,31 @@
         <p>Type a slash command in plain English. Because it already knows your stack, the output uses the right format, the right frameworks, the right test runner.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- Workflow -->
+<section id="workflow" class="workflow-section">
+  <div class="shimmer-line" style="top:0;" aria-hidden="true"></div>
+  <div class="container">
+    <div data-animate-slide>
+      <div class="section-label">Workflow</div>
+      <h2>Skills chain together. Each one feeds the next.</h2>
+      <p class="section-sub">Start anywhere — every command works standalone. But chaining builds richer, state-aware context.</p>
+    </div>
+    <div class="mermaid-wrapper" data-animate-scale>
+      <pre class="mermaid">
+graph LR
+    setup --> pr-review
+    pr-review --> regression-planner
+    regression-planner --> release-readiness
+    pr-review --> bug-report
+    regression-planner --> test-cases
+    test-cases --> e2e-test
+    test-cases --> test-data
+      </pre>
+    </div>
+    <p class="install-note" data-animate>Run <code class="inline-code">/qa-toolkit:setup</code> first to confirm your detected stack, then follow the <strong>Suggested Next Steps</strong> at the bottom of each artifact.</p>
   </div>
 </section>
 

@@ -756,6 +756,22 @@ h2 {
 }
 
 /* ===================== COMMANDS ===================== */
+.workflow-section {
+  border-top: 1px solid var(--border);
+}
+.mermaid-wrapper {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.mermaid-wrapper:hover {
+  border-color: rgba(245,158,11,0.2);
+}
+
 .commands-section {
   background: var(--surface);
   border-top: 1px solid var(--border);

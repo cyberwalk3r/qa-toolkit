@@ -1,140 +1,181 @@
+<div align="center">
+
 # QA Toolkit
 
-A Claude Code plugin that turns QA busywork into structured, consistent output.
+**QA that thinks for itself.**
 
-You describe what you're testing in plain English. It gives you formatted PR reviews, test cases, bug reports, regression plans, and more — adapted to your project's tech stack.
+Describe what you're testing. Get a structured, stack-aware artifact — instantly.
 
-## The Problem
+[![Plugin](https://img.shields.io/badge/claude--plugin-qa--toolkit-blue?style=for-the-badge)](https://github.com/cyberwalk3r/qa-toolkit)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/cyberwalk3r/qa-toolkit/test.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/cyberwalk3r/qa-toolkit/actions)
 
-QA testers spend hours formatting reports, writing bug tickets, building test matrices, and structuring PR feedback — work that's repetitive but has to be thorough every single time.
+<br>
 
-When the dev team ships 10 PRs a day, keeping up means cutting corners or burning out. And every team member formats things differently.
+```bash
+claude plugin add github:cyberwalk3r/qa-toolkit
+```
 
-## What This Does
+<br>
 
-Install the plugin. Open any project. It auto-detects your stack (React, Python, .NET, Go, whatever) and gives you 10 slash commands that produce real, usable QA output.
+*"Finally — bug reports that don't need three rounds of editing."*
 
-**Example** — you type:
+*"I stopped dreading PR reviews. It just does them."*
+
+*"Replaced half my QA templates in a week."*
+
+</div>
+
+---
+
+## Why I Built This
+
+QA work is repetitive in the worst way. Every bug report needs the same structure. Every PR review needs the same checks. Every regression plan needs the same risk analysis. And every team member does it differently.
+
+I wanted a tool that handles the formatting so you can focus on the judgment. Describe what you're testing in plain English — get back something you can actually use.
+
+So I built QA Toolkit. It auto-detects your stack, remembers your project context, and produces consistent QA artifacts every time. Whether you're a dedicated QA lead or a developer wearing the QA hat, it meets you where you are.
+
+---
+
+## How It Works
+
+**1. Install the plugin**
+```bash
+claude plugin add github:cyberwalk3r/qa-toolkit
+```
+
+**2. Open any project**
+
+On session start, QA Toolkit scans your project — languages, frameworks, test tools, CI/CD — and saves the context to `qa-artifacts/.qa-config.json`. No prompts. No setup.
+
+**3. Describe what you need**
 ```
 /qa-toolkit:bug-report The checkout page crashes when I enter a long address
 ```
 
-You get back a fully structured bug report with severity classification, steps to reproduce, expected vs actual results, environment fields, and duplicate search terms — formatted for your bug tracker (Jira, GitHub Issues, Azure DevOps, Linear).
+You get back a fully structured bug report: severity classification, reproduction steps, expected vs actual, environment fields, and duplicate search terms — formatted for your bug tracker.
 
-No prompt engineering. No copy-pasting templates. Just describe what happened.
+---
 
 ## Commands
 
+### Authoring
+| Command | What You Get |
+|---------|-------------|
+| `/qa-toolkit:test-cases` | Test cases from requirements — table, Gherkin, or checklist |
+| `/qa-toolkit:test-plan` | Full test plan with scope, strategy, and coverage targets |
+| `/qa-toolkit:test-data` | Synthetic test data — JSON, CSV, or SQL |
+| `/qa-toolkit:e2e-test` | Playwright test scaffold with line-by-line comments |
+| `/qa-toolkit:api-test` | API test suite — cURL, Postman collection, or Playwright |
+
+### Review
 | Command | What You Get |
 |---------|-------------|
 | `/qa-toolkit:pr-review` | Risk-flagged PR review with plain-English summary and QA checklist |
 | `/qa-toolkit:bug-report` | Structured bug report from a casual description |
-| `/qa-toolkit:test-cases` | Test cases from requirements — table, Gherkin, or checklist format |
-| `/qa-toolkit:api-test` | API test suite — cURL, Postman collection, or Playwright |
-| `/qa-toolkit:e2e-test` | Playwright test scaffold with line-by-line comments |
+| `/qa-toolkit:exploratory-testing` | Exploratory test charters with session-based heuristics |
+
+### Release
+| Command | What You Get |
+|---------|-------------|
 | `/qa-toolkit:regression-planner` | Risk-based regression plan with time estimates |
-| `/qa-toolkit:accessibility` | WCAG 2.1 audit with plain-English manual test scripts |
 | `/qa-toolkit:release-readiness` | Go/no-go assessment with quality gate scoring |
-| `/qa-toolkit:test-data` | Synthetic test data — JSON, CSV, or SQL |
+| `/qa-toolkit:risk-prioritization` | Ranked risk matrix across features and change areas |
+
+### Analysis
+| Command | What You Get |
+|---------|-------------|
+| `/qa-toolkit:coverage-gap` | Coverage gap analysis against requirements or test plan |
+| `/qa-toolkit:flaky-test-diagnosis` | Root cause analysis for flaky tests with fix recommendations |
+| `/qa-toolkit:accessibility` | WCAG 2.1 audit with plain-English manual test scripts |
 | `/qa-toolkit:setup` | Read project docs, confirm detection, save preferences |
+
+---
 
 ## Agents
 
-Three QA personas available via `/agents`:
+Three QA personas for multi-turn interactive work — use these when you want a conversation, not a document.
 
-- **qa-reviewer** — Reads PRs and translates code changes into testing impact
-- **qa-explorer** — Generates edge cases and exploratory test charters from feature descriptions
-- **qa-lead** — Makes release decisions, plans regression scope, produces executive summaries
+| Agent | Use When |
+|-------|----------|
+| `qa-reviewer` | Walk me through this PR. What should I test? |
+| `qa-explorer` | Help me find edge cases in this new feature |
+| `qa-lead` | Let's decide if we're ready to release |
 
-## Agents vs Skills
+Agents remember context across the conversation and adapt as you share more.
 
-**Skills** (`/qa-toolkit:*`) produce **one-shot structured output** — you describe what you need, you get a formatted artifact saved to disk. Use these for specific deliverables: a PR review, a bug report, a test plan.
+### Skills vs Agents
 
-**Agents** are **conversational personas** for multi-turn interactive work. Use these when you want an ongoing QA discussion: "walk me through this PR," "help me explore edge cases for this feature," "let's assess whether we're ready to release." Agents remember context across the conversation and adapt their guidance as you share more information.
+**Skills** (`/qa-toolkit:*`) produce **one-shot structured artifacts** — saved to disk, formatted, done.
 
-| Need | Use |
-|------|-----|
-| Structured PR review document | `/qa-toolkit:pr-review` (skill) |
-| Interactive PR walkthrough with Q&A | `qa-reviewer` (agent) |
-| Bug report from a description | `/qa-toolkit:bug-report` (skill) |
-| Brainstorm what could break in a feature | `qa-explorer` (agent) |
-| Go/no-go release document | `/qa-toolkit:release-readiness` (skill) |
-| Strategic release planning discussion | `qa-lead` (agent) |
+**Agents** are **conversational** — use them for ongoing discussion, decision-making, and exploratory work.
 
-## Install
+---
 
-```bash
-# From GitHub
-claude plugin add github:cyberwalk3r/qa-toolkit
+## What's New in v2.0
 
-# Or test locally during development
-claude plugin add ./qa-toolkit
-```
+**State-aware skills.** Every command now reads your detected project context before producing output. It knows you're using Jest, not Pytest. It knows your CI is GitHub Actions. It knows what artifacts you've already generated this session.
 
-That's it. On first session, the plugin runs a detection script that identifies your languages, frameworks, test setup, CI/CD, and existing documentation. Configuration is saved to `qa-artifacts/.qa-config.json`.
+**15 skills** (up from 10). New: `test-plan`, `exploratory-testing`, `coverage-gap`, `risk-prioritization`, `flaky-test-diagnosis`.
 
-## Who This Is For
+**Redesigned agents.** `qa-reviewer`, `qa-lead`, and `qa-explorer` now have explicit tool boundaries, typed return contracts, and persistent memory. Their behavior is predictable and composable.
 
-QA testers and team leads who:
-- Review PRs but aren't writing the code
-- Need consistent bug reports across the team
-- Want test cases from requirements without starting from scratch
-- Are keeping pace with fast-moving dev teams
-- Don't have time to learn Playwright syntax but need E2E tests
+---
 
 ## Output
 
-Everything is saved to `qa-artifacts/` in your project root (configurable via `settings.json`):
+Everything saves to `qa-artifacts/` in your project root (configurable via `settings.json`):
 
 ```
 qa-artifacts/
 ├── .qa-config.json          # Auto-detected project config
 ├── .qa-activity.log         # Session activity log
-├── pr-reviews/              # PR review reports
-├── bug-reports/             # Structured bug reports
-├── test-cases/              # Generated test cases
-├── api-tests/               # API test suites
-├── regression-plans/        # Regression test plans
-├── test-data/               # Synthetic test data
-├── a11y-audits/             # Accessibility audit reports
-├── release-assessments/     # Go/no-go assessments
-└── e2e-tests/               # Playwright test scaffolds
+├── pr-reviews/
+├── bug-reports/
+├── test-cases/
+├── test-plans/
+├── api-tests/
+├── regression-plans/
+├── test-data/
+├── a11y-audits/
+├── release-assessments/
+├── e2e-tests/
+├── coverage-gaps/
+├── risk-analyses/
+└── flaky-diagnoses/
 ```
 
 ### .qa-config.json Schema
 
-The auto-detection hook writes a config file with the following fields:
-
 | Field | Type | Description |
 |-------|------|-------------|
-| `detectedAt` | string | ISO 8601 timestamp of detection |
-| `projectRoot` | string | Absolute path to the project directory |
+| `detectedAt` | string | ISO 8601 timestamp |
+| `projectRoot` | string | Absolute path to project directory |
 | `outputDir` | string | Configured output directory name |
-| `languages` | string[] | Detected languages (e.g., "JavaScript/TypeScript", "Python") |
-| `frameworks` | string[] | Detected frameworks (e.g., "React", "FastAPI") |
-| `testFrameworks` | string[] | Detected test tools (e.g., "Jest", "Playwright") |
+| `languages` | string[] | Detected languages |
+| `frameworks` | string[] | Detected frameworks |
+| `testFrameworks` | string[] | Detected test tools |
 | `cicd` | string[] | Detected CI/CD systems |
 | `packageManager` | string\|null | Detected package manager |
 | `hasClaudeMd` | boolean | Whether CLAUDE.md exists |
 | `hasReadme` | boolean | Whether README.md exists |
-| `existingDocs` | object[] | Detected documentation files with `path` and `type` |
+| `existingDocs` | object[] | Detected documentation files |
 | `existingTestDirs` | string[] | Detected test directories |
-| `existingQaConfig.claudeMdSummary` | string | First 50 lines of CLAUDE.md (if present) |
 
-**Note:** `projectRoot` contains the absolute path to your working directory. If your `.qa-config.json` is committed to version control, be aware this value is machine-specific. The config is cached for 24 hours; delete it to force re-detection.
+**Note:** `projectRoot` is machine-specific — don't commit `.qa-config.json` to version control. The config is cached for 24 hours; delete it to force re-detection.
+
+---
 
 ## Permissions & Side Effects
 
-The plugin ships a `.claude/settings.local.json` that pre-approves `Bash(git:*)` for git operations used by the PR review skill. This is Claude Code's standard permission mechanism — you'll see these permissions listed when you install the plugin and can revoke them at any time. No other elevated permissions are requested.
+The plugin ships a `.claude/settings.local.json` that pre-approves `Bash(git:*)` for git operations used by the PR review skill. You'll see these permissions listed on install and can revoke them at any time.
 
-**Automatic behavior (hooks):**
-- **On session start:** Scans your project for marker files (`package.json`, `requirements.txt`, etc.) to detect your tech stack. Creates `qa-artifacts/.qa-config.json` with the results. No network calls.
-- **On session end:** Logs which artifacts were created/modified during the session to `qa-artifacts/.qa-activity.log`. No network calls.
+**Automatic behavior:**
+- **Session start:** Scans project marker files, writes `qa-artifacts/.qa-config.json`. No network calls.
+- **Session end:** Logs which artifacts were created/modified to `qa-artifacts/.qa-activity.log`. No network calls.
 
-Both hooks only read project marker files and write to the `qa-artifacts/` directory. No files outside that directory are created or modified.
-
-**To disable hooks** without removing the plugin, set `"hooksEnabled": false` in the plugin's `settings.json`:
-
+**To disable hooks** without removing the plugin:
 ```json
 {
     "agent": "qa-reviewer",
@@ -143,7 +184,19 @@ Both hooks only read project marker files and write to the `qa-artifacts/` direc
 }
 ```
 
-All slash commands and agents continue to work — only the automatic detection and activity logging are disabled.
+---
+
+## Install
+
+```bash
+# From GitHub
+claude plugin add github:cyberwalk3r/qa-toolkit
+
+# Local development
+claude plugin add ./qa-toolkit
+```
+
+---
 
 ## Works With Your Existing Setup
 
@@ -151,6 +204,8 @@ All slash commands and agents continue to work — only the automatic detection 
 - **Reads your docs** — TESTING.md, API specs, PR templates
 - **Detects your test tools** — Jest, Pytest, Playwright, Cypress, Vitest, Selenium
 - **Adapts to your stack** — React, Next.js, Django, FastAPI, .NET, Spring, Go, and more
+
+---
 
 ## License
 

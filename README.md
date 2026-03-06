@@ -18,12 +18,6 @@ claude plugin add github:cyberwalk3r/qa-toolkit
 
 <br>
 
-*"Finally — bug reports that don't need three rounds of editing."*
-
-*"I stopped dreading PR reviews. It just does them."*
-
-*"Replaced half my QA templates in a week."*
-
 </div>
 
 ---
@@ -34,7 +28,7 @@ QA work is repetitive in the worst way. Every bug report needs the same structur
 
 I wanted a tool that handles the formatting so you can focus on the judgment. Describe what you're testing in plain English — get back something you can actually use.
 
-So I built QA Toolkit. It auto-detects your stack, remembers your project context, and produces consistent QA artifacts every time. Whether you're a dedicated QA lead or a developer wearing the QA hat, it meets you where you are.
+So I built QA Toolkit. It auto-detects your stack, remembers your project context, and produces consistent QA artifacts every time. Whether you're a dedicated QA lead or a developer wearing the QA hat, it adapts to your stack and your tracker without asking you to configure anything.
 
 ---
 
@@ -97,13 +91,13 @@ You get back a fully structured bug report: severity classification, reproductio
 
 Three QA personas for multi-turn interactive work — use these when you want a conversation, not a document.
 
-| Agent | Use When |
-|-------|----------|
-| `qa-reviewer` | Walk me through this PR. What should I test? |
-| `qa-explorer` | Help me find edge cases in this new feature |
-| `qa-lead` | Let's decide if we're ready to release |
+| Agent | What It Does |
+|-------|-------------|
+| `qa-reviewer` | Reads PRs and translates code changes into testing impact — which user flows are at risk, what to test first, what's safe to skip |
+| `qa-explorer` | Generates edge cases and exploratory charters from feature descriptions — finds the scenarios your requirements didn't think to mention |
+| `qa-lead` | Makes release decisions, plans regression scope, and produces executive summaries — the QA voice in a release meeting |
 
-Agents remember context across the conversation and adapt as you share more.
+Agents remember context across the conversation. The more you share, the sharper the output.
 
 ### Skills vs Agents
 

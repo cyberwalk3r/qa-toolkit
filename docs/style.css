@@ -87,8 +87,8 @@ nav a:hover { color: var(--amber); }
 .quotes { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3rem 2rem; }
 .quotes-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; }
 .quote { padding: 1.5rem; border: 1px solid var(--border); border-radius: 8px; }
-.quote p { color: var(--text); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
-.quote cite { font-size: 0.775rem; color: var(--text-muted); font-style: normal; }
+.quote p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+.quote p strong { color: var(--text); display: block; margin-bottom: 0.5rem; font-size: 0.95rem; }
 
 /* Sections */
 section { padding: 5rem 2rem; }

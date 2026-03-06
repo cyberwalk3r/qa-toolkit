@@ -89,3 +89,7 @@ claude --debug --plugin-dir ./qa-toolkit
 ```
 
 The `--debug` flag shows hook execution and skill loading in the Claude Code output.
+
+---
+
+Something missing or wrong? Open an issue — this doc is meant to stay short, not stay incomplete.

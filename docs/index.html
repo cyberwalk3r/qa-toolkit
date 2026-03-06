@@ -59,20 +59,17 @@
   </div>
 </section>
 
-<!-- Quotes -->
+<!-- What you stop doing -->
 <div class="quotes">
   <div class="quotes-inner">
     <div class="quote">
-      <p>"Finally — bug reports that don't need three rounds of editing before they're usable."</p>
-      <cite>— QA Lead, fintech startup</cite>
+      <p><strong>Bug reports in seconds.</strong> Describe what broke. Get back severity classification, steps to reproduce, expected vs actual, and environment fields — formatted for your tracker, not a generic template.</p>
     </div>
     <div class="quote">
-      <p>"I stopped dreading PR reviews. It reads the diff, flags the risks, writes the checklist. I just review the output."</p>
-      <cite>— Senior developer doubling as QA</cite>
+      <p><strong>PR reviews that actually help.</strong> It reads the diff, maps which files touch which user flows, and writes a QA checklist grounded in what actually changed — not a checklist you've seen a hundred times.</p>
     </div>
     <div class="quote">
-      <p>"Replaced half our QA templates in a week. The team is actually using them consistently for the first time."</p>
-      <cite>— Engineering manager</cite>
+      <p><strong>Artifacts that fit your stack.</strong> It knows you're using Jest, not Pytest. It knows your CI runs on GitHub Actions. The output matches what your team already does, automatically.</p>
     </div>
   </div>
 </div>
@@ -82,7 +79,7 @@
   <div class="container">
     <div class="section-label">How It Works</div>
     <h2>Three steps. That's it.</h2>
-    <p class="section-sub">Install once. Open any project. It auto-detects your stack and gets to work.</p>
+    <p class="section-sub">Install once. Open any project. It scans your stack before you type your first command.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
@@ -97,7 +94,7 @@
       <div class="step">
         <div class="step-num">03</div>
         <h3>Describe what you need</h3>
-        <p>Type a slash command in plain English. Get back a structured, formatted artifact saved to disk.</p>
+        <p>Type a slash command in plain English. Because it already knows your stack, the output uses the right format, the right frameworks, the right test runner.</p>
       </div>
     </div>
   </div>
@@ -192,14 +189,14 @@
 <section id="install" class="install-section">
   <div class="container">
     <div class="section-label">Install</div>
-    <h2>One command to get started.</h2>
-    <p class="section-sub">Works with any project. No configuration required.</p>
+    <h2>One command to install. Zero to configure.</h2>
+    <p class="section-sub">Works with any project. Configurable if you want — but you don't have to.</p>
     <div class="code-block"><span class="comment"># From GitHub</span>
 <span class="cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
 
 <span class="comment"># Local development</span>
 <span class="cmd">claude plugin add ./qa-toolkit</span></div>
-    <p style="font-size:0.875rem;color:var(--text-muted)">On first session, auto-detection runs and saves your project context to <code style="color:var(--amber);font-family:var(--font-mono);font-size:0.85em">qa-artifacts/.qa-config.json</code>. Everything is ready.</p>
+    <p style="font-size:0.875rem;color:var(--text-muted)">On first session, auto-detection runs and saves your project context to <code style="color:var(--amber);font-family:var(--font-mono);font-size:0.85em">qa-artifacts/.qa-config.json</code>. Every subsequent command reads from it.</p>
   </div>
 </section>
 

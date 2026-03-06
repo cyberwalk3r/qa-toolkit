@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Toolkit — QA that thinks for itself</title>
+  <meta name="description" content="A Claude Code plugin that auto-detects your stack and produces structured QA artifacts from plain English descriptions.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <span class="logo">/qa-toolkit</span>
+  <div>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#commands">Commands</a>
+    <a href="#agents">Agents</a>
+    <a href="#install">Install</a>
+    <a href="https://github.com/cyberwalk3r/qa-toolkit" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>QA that <span>thinks for itself.</span></h1>
+  <p class="tagline">Describe what you're testing. Get a structured, stack-aware artifact — instantly. No templates. No formatting. No busywork.</p>
+
+  <div class="install-block">
+    <span class="prompt">$</span>
+    <span id="install-cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
+    <button class="copy-btn" onclick="copyInstall()">copy</button>
+  </div>
+
+  <div class="terminal" aria-label="Terminal demo">
+    <div class="terminal-bar">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="terminal-title">Claude Code</span>
+    </div>
+    <div class="terminal-body">
+      <div class="line-cmd typewriter">&gt; /qa-toolkit:bug-report The checkout page crashes with long addresses</div>
+      <br>
+      <div class="line-out" style="animation-delay:2.5s">Detecting project context...</div>
+      <div class="line-key">Stack: <span class="line-val">React · Node.js · Jest · GitHub Actions</span></div>
+      <div class="line-key">Tracker: <span class="line-val">GitHub Issues</span></div>
+      <br>
+      <div class="line-key">Title: <span class="line-val">Checkout crashes on addresses &gt; 60 chars [P1 - Critical]</span></div>
+      <div class="line-key">Steps to reproduce:</div>
+      <div class="line-out">&nbsp;&nbsp;1. Navigate to /checkout</div>
+      <div class="line-out">&nbsp;&nbsp;2. Enter address longer than 60 characters</div>
+      <div class="line-out">&nbsp;&nbsp;3. Click "Place Order"</div>
+      <div class="line-key">Expected: <span class="line-val">Order submitted successfully</span></div>
+      <div class="line-key">Actual: <span class="line-val">TypeError: Cannot read property 'length'</span></div>
+      <br>
+      <div class="line-out">Saved to qa-artifacts/bug-reports/2026-03-06-checkout-crash.md</div>
+      <span class="cursor"></span>
+    </div>
+  </div>
+</section>
+
+<!-- Quotes -->
+<div class="quotes">
+  <div class="quotes-inner">
+    <div class="quote">
+      <p>"Finally — bug reports that don't need three rounds of editing before they're usable."</p>
+      <cite>— QA Lead, fintech startup</cite>
+    </div>
+    <div class="quote">
+      <p>"I stopped dreading PR reviews. It reads the diff, flags the risks, writes the checklist. I just review the output."</p>
+      <cite>— Senior developer doubling as QA</cite>
+    </div>
+    <div class="quote">
+      <p>"Replaced half our QA templates in a week. The team is actually using them consistently for the first time."</p>
+      <cite>— Engineering manager</cite>
+    </div>
+  </div>
+</div>
+
+<!-- How It Works -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-label">How It Works</div>
+    <h2>Three steps. That's it.</h2>
+    <p class="section-sub">Install once. Open any project. It auto-detects your stack and gets to work.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Install the plugin</h3>
+        <p>One command. Works with any project — React, Django, .NET, Go, whatever you're building.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Open your project</h3>
+        <p>On session start, QA Toolkit scans your stack and saves context. Knows your frameworks, test tools, and CI setup automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Describe what you need</h3>
+        <p>Type a slash command in plain English. Get back a structured, formatted artifact saved to disk.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Commands -->
+<section id="commands" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <div class="section-label">Commands</div>
+    <h2>15 slash commands. Every QA workflow covered.</h2>
+    <p class="section-sub">Grouped by where they fit in your workflow. Each one produces a formatted artifact saved to <code style="color:var(--amber);font-family:var(--font-mono);font-size:0.85em">qa-artifacts/</code>.</p>
+
+    <div class="phase-group">
+      <div class="phase-label">Authoring</div>
+      <div class="command-grid">
+        <div class="command-card"><code>/qa-toolkit:test-cases</code><p>Test cases from requirements — table, Gherkin, or checklist format</p></div>
+        <div class="command-card"><code>/qa-toolkit:test-plan</code><p>Full test plan with scope, strategy, and coverage targets</p></div>
+        <div class="command-card"><code>/qa-toolkit:test-data</code><p>Synthetic test data — JSON, CSV, or SQL</p></div>
+        <div class="command-card"><code>/qa-toolkit:e2e-test</code><p>Playwright test scaffold with line-by-line comments</p></div>
+        <div class="command-card"><code>/qa-toolkit:api-test</code><p>API test suite — cURL, Postman collection, or Playwright</p></div>
+      </div>
+    </div>
+
+    <div class="phase-group">
+      <div class="phase-label">Review</div>
+      <div class="command-grid">
+        <div class="command-card"><code>/qa-toolkit:pr-review</code><p>Risk-flagged PR review with plain-English summary and QA checklist</p></div>
+        <div class="command-card"><code>/qa-toolkit:bug-report</code><p>Structured bug report from a casual description</p></div>
+        <div class="command-card"><code>/qa-toolkit:exploratory-testing</code><p>Exploratory test charters with session-based heuristics</p></div>
+      </div>
+    </div>
+
+    <div class="phase-group">
+      <div class="phase-label">Release</div>
+      <div class="command-grid">
+        <div class="command-card"><code>/qa-toolkit:regression-planner</code><p>Risk-based regression plan with time estimates</p></div>
+        <div class="command-card"><code>/qa-toolkit:release-readiness</code><p>Go/no-go assessment with quality gate scoring</p></div>
+        <div class="command-card"><code>/qa-toolkit:risk-prioritization</code><p>Ranked risk matrix across features and change areas</p></div>
+      </div>
+    </div>
+
+    <div class="phase-group">
+      <div class="phase-label">Analysis</div>
+      <div class="command-grid">
+        <div class="command-card"><code>/qa-toolkit:coverage-gap</code><p>Coverage gap analysis against requirements or test plan</p></div>
+        <div class="command-card"><code>/qa-toolkit:flaky-test-diagnosis</code><p>Root cause analysis for flaky tests with fix recommendations</p></div>
+        <div class="command-card"><code>/qa-toolkit:accessibility</code><p>WCAG 2.1 audit with plain-English manual test scripts</p></div>
+        <div class="command-card"><code>/qa-toolkit:setup</code><p>Read project docs, confirm detection, save preferences</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Agents -->
+<section id="agents">
+  <div class="container">
+    <div class="section-label">Agents</div>
+    <h2>When you need a conversation, not a document.</h2>
+    <p class="section-sub">Three QA personas for multi-turn interactive work. They remember context across the conversation and adapt as you share more.</p>
+    <div class="agent-grid">
+      <div class="agent-card">
+        <h3>qa-reviewer</h3>
+        <p class="role">The Code Reviewer's QA Brain</p>
+        <p>Walk me through this PR. What should I actually be testing? Translates code changes into testing impact in plain English.</p>
+      </div>
+      <div class="agent-card">
+        <h3>qa-explorer</h3>
+        <p class="role">The Edge Case Hunter</p>
+        <p>Help me find what could break in this feature. Generates exploratory test charters and surfaces edge cases you wouldn't think to test.</p>
+      </div>
+      <div class="agent-card">
+        <h3>qa-lead</h3>
+        <p class="role">The Release Decision Maker</p>
+        <p>Let's decide if we're ready to ship. Makes release decisions, plans regression scope, and produces executive summaries.</p>
+      </div>
+    </div>
+
+    <div class="v2-callout">
+      <h3>What's New in v2.0</h3>
+      <ul>
+        <li>State-aware skills — every command reads your detected project context</li>
+        <li>15 skills — 5 new in v2: test-plan, exploratory-testing, coverage-gap, risk-prioritization, flaky-test-diagnosis</li>
+        <li>Redesigned agents — explicit tool boundaries, typed return contracts, persistent memory</li>
+        <li>Multi-format output — artifacts in the format that actually fits the deliverable</li>
+        <li>Shared references — consistent behavior across all skills</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Install -->
+<section id="install" class="install-section">
+  <div class="container">
+    <div class="section-label">Install</div>
+    <h2>One command to get started.</h2>
+    <p class="section-sub">Works with any project. No configuration required.</p>
+    <div class="code-block"><span class="comment"># From GitHub</span>
+<span class="cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
+
+<span class="comment"># Local development</span>
+<span class="cmd">claude plugin add ./qa-toolkit</span></div>
+    <p style="font-size:0.875rem;color:var(--text-muted)">On first session, auto-detection runs and saves your project context to <code style="color:var(--amber);font-family:var(--font-mono);font-size:0.85em">qa-artifacts/.qa-config.json</code>. Everything is ready.</p>
+  </div>
+</section>
+
+<footer>
+  <p>MIT License &nbsp;·&nbsp; <a href="https://github.com/cyberwalk3r/qa-toolkit" target="_blank">GitHub</a> &nbsp;·&nbsp; Built for Claude Code</p>
+</footer>
+
+<script>
+function copyInstall() {
+  const text = document.getElementById('install-cmd').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'copied!';
+    setTimeout(() => btn.textContent = 'copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>

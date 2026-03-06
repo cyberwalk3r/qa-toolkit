@@ -121,7 +121,7 @@ describe('detect-project.js', () => {
         assert.ok(config.existingDocs.some(d => d.type === 'claude-md'));
     });
 
-    it('uses cached config within 24 hours', () => {
+    it('always runs fresh detection (no cache)', () => {
         const projectDir = path.join(tmpDir, 'cache-project');
         fs.mkdirSync(projectDir, { recursive: true });
 
@@ -129,11 +129,13 @@ describe('detect-project.js', () => {
         runDetect(projectDir);
         const config1 = readConfig(projectDir);
 
-        // Second run should use cache (same detectedAt timestamp)
+        // Second run always re-detects (cache was removed in v2 — detection always runs fresh)
         runDetect(projectDir);
         const config2 = readConfig(projectDir);
 
-        assert.equal(config1.detectedAt, config2.detectedAt);
+        // Both configs should be valid detections
+        assert.ok(config1.detectedAt);
+        assert.ok(config2.detectedAt);
     });
 
     it('detects .csproj in subdirectories via recursive glob', () => {
@@ -186,8 +188,9 @@ describe('detect-project.js', () => {
         runDetect(projectDir);
 
         const qaDir = path.join(projectDir, 'qa-artifacts');
-        const entries = fs.readdirSync(qaDir);
-        // Should only have .qa-config.json, no subdirectories
-        assert.deepEqual(entries, ['.qa-config.json']);
+        const entries = fs.readdirSync(qaDir).sort();
+        // Should only have state files, no subdirectories (v2 writes .qa-context.json + legacy .qa-config.json)
+        const dirs = entries.filter(e => fs.statSync(path.join(qaDir, e)).isDirectory());
+        assert.deepEqual(dirs, []);
     });
 });

@@ -2,8 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(git:*)",
-      "Skill(gsd:map-codebase)",
-      "Bash(node:*)"
+      "Bash(node scripts/detect-project.js:*)",
+      "Bash(node scripts/session-hook.js:*)",
+      "Bash(node scripts/state-manager.js:*)"
     ]
   }
 }

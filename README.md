@@ -163,7 +163,16 @@ qa-artifacts/
 
 ## Permissions & Side Effects
 
-The plugin ships a `.claude/settings.local.json` that pre-approves `Bash(git:*)` for git operations used by the PR review skill. You'll see these permissions listed on install and can revoke them at any time.
+The plugin ships a `.claude/settings.local.json` that pre-approves the following permissions:
+
+| Permission | Used by |
+|------------|---------|
+| `Bash(git:*)` | PR review skill — reads diff and log |
+| `Bash(node scripts/detect-project.js:*)` | SessionStart hook — project detection |
+| `Bash(node scripts/session-hook.js:*)` | Stop hook — session archiving and activity log |
+| `Bash(node scripts/state-manager.js:*)` | All skills — reading and writing QA state |
+
+You'll see these listed when you install the plugin and can revoke them at any time.
 
 **Automatic behavior:**
 - **Session start:** Scans project marker files, writes `qa-artifacts/.qa-config.json`. No network calls.

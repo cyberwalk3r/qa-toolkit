@@ -54,9 +54,20 @@
   }
   </script>
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Scroll progress bar -->
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- Global ambient particles -->
+<canvas id="ambient-particles" aria-hidden="true"></canvas>
 
 <nav>
   <span class="logo">/qa-toolkit</span>
@@ -71,41 +82,20 @@
 
 <!-- Hero -->
 <section class="hero">
-  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-glow" id="hero-glow" aria-hidden="true"></div>
   <div class="hero-grid" aria-hidden="true"></div>
+  <canvas id="hero-particles" aria-hidden="true"></canvas>
 
   <div class="hero-content">
     <div class="hero-badge">Claude Code Plugin &nbsp;·&nbsp; v2.0 &nbsp;·&nbsp; Free &amp; Open Source</div>
 
-    <h1>QA that <span class="shimmer">thinks for itself.</span></h1>
-    <p class="tagline">Describe what you're testing. Get a structured, stack-aware artifact — instantly. No templates. No formatting. No busywork.</p>
+    <h1>Test the code.<br><span class="shimmer">Trust the release.</span></h1>
+    <p class="tagline">15 QA commands for Claude Code — test cases, PR reviews, bug reports, and more. Auto-detects your stack. Zero config.</p>
 
     <div class="install-block">
       <span class="prompt">$</span>
       <span id="install-cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
       <button class="copy-btn" onclick="copyInstall()" aria-label="Copy install command">copy</button>
-    </div>
-
-    <div class="stats-strip" aria-label="Quick stats">
-      <div class="stat">
-        <span class="stat-num">15</span>
-        <span class="stat-label">slash commands</span>
-      </div>
-      <div class="stat-divider" aria-hidden="true"></div>
-      <div class="stat">
-        <span class="stat-num">3</span>
-        <span class="stat-label">QA agents</span>
-      </div>
-      <div class="stat-divider" aria-hidden="true"></div>
-      <div class="stat">
-        <span class="stat-num">0</span>
-        <span class="stat-label">config required</span>
-      </div>
-      <div class="stat-divider" aria-hidden="true"></div>
-      <div class="stat">
-        <span class="stat-num">8+</span>
-        <span class="stat-label">tech stacks</span>
-      </div>
     </div>
 
     <div class="terminal" aria-label="Terminal demo">
@@ -118,20 +108,48 @@
       <div class="terminal-body" id="terminal-body"></div>
     </div>
 
-    <p class="hero-hint">↓ scroll to see all 15 commands</p>
+    <div class="stats-strip" aria-label="Quick stats">
+      <div class="stat">
+        <span class="stat-num" data-count="15">0</span>
+        <span class="stat-label">slash commands</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat">
+        <span class="stat-num" data-count="3">0</span>
+        <span class="stat-label">QA agents</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat">
+        <span class="stat-num" data-count="0">0</span>
+        <span class="stat-label">config required</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat">
+        <span class="stat-num" data-count-text="8+">0</span>
+        <span class="stat-label">tech stacks</span>
+      </div>
+    </div>
+
+    <p class="hero-hint">scroll to see all 15 commands</p>
   </div>
 </section>
 
 <!-- Value props -->
 <div class="quotes">
-  <div class="quotes-inner">
-    <div class="quote" data-animate>
+  <!-- Ambient orb -->
+  <div class="section-orb section-orb--amber" style="width:500px;height:500px;top:-100px;right:-150px;" data-parallax="0.03" aria-hidden="true"></div>
+  <div class="shimmer-line" style="top:0;" aria-hidden="true"></div>
+  <div class="quotes-inner" data-animate-stagger>
+    <div class="quote">
+      <div class="card-glow"></div>
       <p><strong>Bug reports in seconds.</strong> Describe what broke. Get back severity classification, steps to reproduce, expected vs actual, and environment fields — formatted for your tracker, not a generic template.</p>
     </div>
-    <div class="quote" data-animate>
+    <div class="quote">
+      <div class="card-glow"></div>
       <p><strong>PR reviews that actually help.</strong> It reads the diff, maps which files touch which user flows, and writes a QA checklist grounded in what actually changed — not a checklist you've seen a hundred times.</p>
     </div>
-    <div class="quote" data-animate>
+    <div class="quote">
+      <div class="card-glow"></div>
       <p><strong>Artifacts that fit your stack.</strong> It knows you're using Jest, not Pytest. It knows your CI runs on GitHub Actions. The output matches what your team already does, automatically.</p>
     </div>
   </div>
@@ -139,22 +157,32 @@
 
 <!-- How It Works -->
 <section id="how-it-works">
+  <!-- Ambient orbs -->
+  <div class="section-orb section-orb--amber-dim" style="width:400px;height:400px;top:50%;left:-100px;" data-parallax="0.04" aria-hidden="true"></div>
+  <div class="dot-grid" aria-hidden="true"></div>
+  <div class="light-sweep" aria-hidden="true"></div>
+
   <div class="container">
-    <div class="section-label">How It Works</div>
-    <h2>Three steps. That's it.</h2>
-    <p class="section-sub">Install once. Open any project. It scans your stack before you type your first command.</p>
-    <div class="steps">
-      <div class="step" data-animate>
+    <div data-animate-slide>
+      <div class="section-label">How It Works</div>
+      <h2>Three steps. That's it.</h2>
+      <p class="section-sub">Install once. Open any project. It scans your stack before you type your first command.</p>
+    </div>
+    <div class="steps" data-animate-stagger>
+      <div class="step">
+        <div class="card-glow"></div>
         <div class="step-num">01</div>
         <h3>Install the plugin</h3>
         <p>One command. Works with any project — React, Django, .NET, Go, whatever you're building.</p>
       </div>
-      <div class="step" data-animate>
+      <div class="step">
+        <div class="card-glow"></div>
         <div class="step-num">02</div>
         <h3>Open your project</h3>
         <p>On session start, QA Toolkit scans your stack and saves context. Knows your frameworks, test tools, and CI setup automatically.</p>
       </div>
-      <div class="step" data-animate>
+      <div class="step">
+        <div class="card-glow"></div>
         <div class="step-num">03</div>
         <h3>Describe what you need</h3>
         <p>Type a slash command in plain English. Because it already knows your stack, the output uses the right format, the right frameworks, the right test runner.</p>
@@ -165,47 +193,54 @@
 
 <!-- Commands -->
 <section id="commands" class="commands-section">
+  <!-- Ambient orbs -->
+  <div class="section-orb section-orb--amber" style="width:600px;height:600px;bottom:-200px;right:-200px;" data-parallax="0.025" aria-hidden="true"></div>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="shimmer-line" style="top:0;" aria-hidden="true"></div>
+
   <div class="container">
-    <div class="section-label">Commands</div>
-    <h2>15 slash commands. Every QA workflow covered.</h2>
-    <p class="section-sub">Grouped by where they fit in your workflow. Each one produces a formatted artifact saved to <code class="inline-code">qa-artifacts/</code>.</p>
+    <div data-animate-slide>
+      <div class="section-label">Commands</div>
+      <h2>15 slash commands. Every QA workflow covered.</h2>
+      <p class="section-sub">Grouped by where they fit in your workflow. Each one produces a formatted artifact saved to <code class="inline-code">qa-artifacts/</code>.</p>
+    </div>
 
     <div class="phase-group" data-animate>
       <div class="phase-label">Authoring</div>
-      <div class="command-grid">
-        <div class="command-card"><code>/qa-toolkit:test-cases</code><p>Test cases from requirements — table, Gherkin, or checklist format</p></div>
-        <div class="command-card"><code>/qa-toolkit:test-plan</code><p>Full test plan with scope, strategy, and coverage targets</p></div>
-        <div class="command-card"><code>/qa-toolkit:test-data</code><p>Synthetic test data — JSON, CSV, or SQL</p></div>
-        <div class="command-card"><code>/qa-toolkit:e2e-test</code><p>Playwright test scaffold with line-by-line comments</p></div>
-        <div class="command-card"><code>/qa-toolkit:api-test</code><p>API test suite — cURL, Postman collection, or Playwright</p></div>
+      <div class="command-grid" data-animate-stagger>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:test-cases</code><p>Test cases from requirements — table, Gherkin, or checklist format</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:test-plan</code><p>Full test plan with scope, strategy, and coverage targets</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:test-data</code><p>Synthetic test data — JSON, CSV, or SQL</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:e2e-test</code><p>Playwright test scaffold with line-by-line comments</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:api-test</code><p>API test suite — cURL, Postman collection, or Playwright</p></div>
       </div>
     </div>
 
     <div class="phase-group" data-animate>
       <div class="phase-label">Review</div>
-      <div class="command-grid">
-        <div class="command-card"><code>/qa-toolkit:pr-review</code><p>Risk-flagged PR review with plain-English summary and QA checklist</p></div>
-        <div class="command-card"><code>/qa-toolkit:bug-report</code><p>Structured bug report from a casual description</p></div>
-        <div class="command-card"><code>/qa-toolkit:exploratory-testing</code><p>Exploratory test charters with session-based heuristics</p></div>
+      <div class="command-grid" data-animate-stagger>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:pr-review</code><p>Risk-flagged PR review with plain-English summary and QA checklist</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:bug-report</code><p>Structured bug report from a casual description</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:exploratory-testing</code><p>Exploratory test charters with session-based heuristics</p></div>
       </div>
     </div>
 
     <div class="phase-group" data-animate>
       <div class="phase-label">Release</div>
-      <div class="command-grid">
-        <div class="command-card"><code>/qa-toolkit:regression-planner</code><p>Risk-based regression plan with time estimates</p></div>
-        <div class="command-card"><code>/qa-toolkit:release-readiness</code><p>Go/no-go assessment with quality gate scoring</p></div>
-        <div class="command-card"><code>/qa-toolkit:risk-prioritization</code><p>Ranked risk matrix across features and change areas</p></div>
+      <div class="command-grid" data-animate-stagger>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:regression-planner</code><p>Risk-based regression plan with time estimates</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:release-readiness</code><p>Go/no-go assessment with quality gate scoring</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:risk-prioritization</code><p>Ranked risk matrix across features and change areas</p></div>
       </div>
     </div>
 
     <div class="phase-group" data-animate>
       <div class="phase-label">Analysis</div>
-      <div class="command-grid">
-        <div class="command-card"><code>/qa-toolkit:coverage-gap</code><p>Coverage gap analysis against requirements or test plan</p></div>
-        <div class="command-card"><code>/qa-toolkit:flaky-test-diagnosis</code><p>Root cause analysis for flaky tests with fix recommendations</p></div>
-        <div class="command-card"><code>/qa-toolkit:accessibility</code><p>WCAG 2.1 audit with plain-English manual test scripts</p></div>
-        <div class="command-card"><code>/qa-toolkit:setup</code><p>Read project docs, confirm detection, save preferences</p></div>
+      <div class="command-grid" data-animate-stagger>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:coverage-gap</code><p>Coverage gap analysis against requirements or test plan</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:flaky-test-diagnosis</code><p>Root cause analysis for flaky tests with fix recommendations</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:accessibility</code><p>WCAG 2.1 audit with plain-English manual test scripts</p></div>
+        <div class="command-card"><div class="card-glow"></div><code>/qa-toolkit:setup</code><p>Read project docs, confirm detection, save preferences</p></div>
       </div>
     </div>
   </div>
@@ -213,32 +248,44 @@
 
 <!-- Agents -->
 <section id="agents">
+  <!-- Ambient orbs -->
+  <div class="section-orb section-orb--amber" style="width:500px;height:500px;top:20%;left:-150px;" data-parallax="0.035" aria-hidden="true"></div>
+  <div class="section-orb section-orb--amber-dim" style="width:350px;height:350px;bottom:10%;right:-100px;" data-parallax="0.05" aria-hidden="true"></div>
+  <div class="dot-grid" aria-hidden="true"></div>
+  <div class="radial-pulse" style="top:50%;left:50%;margin-left:-250px;margin-top:-250px;" aria-hidden="true"></div>
+  <div class="shimmer-line" style="bottom:0;" aria-hidden="true"></div>
+
   <div class="container">
-    <div class="section-label">Agents</div>
-    <h2>When you need a conversation, not a document.</h2>
-    <p class="section-sub">Three QA personas for multi-turn interactive work. They remember context across the conversation and adapt as you share more.</p>
-    <div class="agent-grid">
-      <div class="agent-card" data-animate>
-        <div class="agent-icon" aria-hidden="true">◈</div>
+    <div data-animate-slide>
+      <div class="section-label">Agents</div>
+      <h2>When you need a conversation, not a document.</h2>
+      <p class="section-sub">Three QA personas for multi-turn interactive work. They remember context across the conversation and adapt as you share more.</p>
+    </div>
+    <div class="agent-grid" data-animate-stagger>
+      <div class="agent-card">
+        <div class="card-glow"></div>
+        <div class="agent-icon" aria-hidden="true">&#9672;</div>
         <h3>qa-reviewer</h3>
         <p class="role">The Code Reviewer's QA Brain</p>
         <p>Walk me through this PR. What should I actually be testing? Translates code changes into testing impact in plain English.</p>
       </div>
-      <div class="agent-card" data-animate>
-        <div class="agent-icon" aria-hidden="true">◈</div>
+      <div class="agent-card">
+        <div class="card-glow"></div>
+        <div class="agent-icon" aria-hidden="true">&#9672;</div>
         <h3>qa-explorer</h3>
         <p class="role">The Edge Case Hunter</p>
         <p>Help me find what could break in this feature. Generates exploratory test charters and surfaces edge cases you wouldn't think to test.</p>
       </div>
-      <div class="agent-card" data-animate>
-        <div class="agent-icon" aria-hidden="true">◈</div>
+      <div class="agent-card">
+        <div class="card-glow"></div>
+        <div class="agent-icon" aria-hidden="true">&#9672;</div>
         <h3>qa-lead</h3>
         <p class="role">The Release Decision Maker</p>
         <p>Let's decide if we're ready to ship. Makes release decisions, plans regression scope, and produces executive summaries.</p>
       </div>
     </div>
 
-    <div class="v2-callout" data-animate>
+    <div class="v2-callout" data-animate-scale>
       <h3>What's New in v2.0</h3>
       <ul>
         <li>State-aware skills — every command reads your detected project context</li>
@@ -253,16 +300,21 @@
 
 <!-- Install -->
 <section id="install" class="install-section">
+  <div class="section-orb section-orb--amber" style="width:400px;height:400px;top:50%;left:50%;transform:translate(-50%,-50%);" data-parallax="0.02" aria-hidden="true"></div>
+  <div class="light-sweep" aria-hidden="true"></div>
+
   <div class="container">
-    <div class="section-label">Install</div>
-    <h2>One command to install. Zero to configure.</h2>
-    <p class="section-sub">Works with any project. Configurable if you want — but you don't have to.</p>
-    <div class="code-block" data-animate><span class="comment"># From GitHub</span>
+    <div data-animate-slide>
+      <div class="section-label">Install</div>
+      <h2>One command to install. Zero to configure.</h2>
+      <p class="section-sub">Works with any project. Configurable if you want — but you don't have to.</p>
+    </div>
+    <div class="code-block" data-animate-scale><span class="comment"># From GitHub</span>
 <span class="cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
 
 <span class="comment"># Local development</span>
 <span class="cmd">claude plugin add ./qa-toolkit</span></div>
-    <p class="install-note">On first session, auto-detection runs and saves your project context to <code class="inline-code">qa-artifacts/.qa-context.json</code>. Every subsequent command reads from it.</p>
+    <p class="install-note" data-animate>On first session, auto-detection runs and saves your project context to <code class="inline-code">qa-artifacts/.qa-context.json</code>. Every subsequent command reads from it.</p>
   </div>
 </section>
 
@@ -282,42 +334,260 @@ function copyInstall() {
   });
 }
 
+// ---- Scroll progress bar ----
+const scrollProgress = document.getElementById('scroll-progress');
+function updateScrollProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  scrollProgress.style.width = progress + '%';
+}
+
+// ---- Nav scroll effect ----
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  updateScrollProgress();
+}, { passive: true });
+
+// ---- Mouse-reactive hero glow ----
+const heroGlow = document.getElementById('hero-glow');
+const heroSection = document.querySelector('.hero');
+heroSection.addEventListener('mousemove', (e) => {
+  const rect = heroSection.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  heroGlow.style.transform = `translate(${x - 350}px, ${y - 350}px)`;
+});
+
+// ---- Global ambient particles (all sections) ----
+(function initAmbientParticles() {
+  const canvas = document.getElementById('ambient-particles');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let particles = [];
+  const COUNT = 60;
+
+  function resize() {
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function seed() {
+    particles = [];
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    for (let i = 0; i < COUNT; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.2 + 0.3,
+        vx: (Math.random() - 0.5) * 0.12,
+        vy: -Math.random() * 0.25 - 0.03,
+        alpha: Math.random() * 0.35 + 0.05,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: Math.random() * 0.008 + 0.003,
+      });
+    }
+  }
+
+  function draw() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    ctx.clearRect(0, 0, w, h);
+
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.pulse += p.pulseSpeed;
+
+      if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+      if (p.x < -10) p.x = w + 10;
+      if (p.x > w + 10) p.x = -10;
+
+      const flicker = 0.5 + 0.5 * Math.sin(p.pulse);
+      const a = p.alpha * flicker;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245, 158, 11, ${a})`;
+      ctx.fill();
+
+      if (p.r > 0.8) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 158, 11, ${a * 0.1})`;
+        ctx.fill();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  seed();
+  draw();
+  window.addEventListener('resize', () => { resize(); seed(); });
+})();
+
+// ---- Hero swirling particle vortex ----
+(function initHeroVortex() {
+  const canvas = document.getElementById('hero-particles');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let particles = [];
+  const COUNT = 350;
+  let time = 0;
+
+  function resize() {
+    const rect = heroSection.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function seed() {
+    particles = [];
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    const maxDist = Math.max(w, h) * 0.55;
+    for (let i = 0; i < COUNT; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 30 + Math.random() * maxDist;
+      particles.push({
+        angle: angle,
+        dist: dist,
+        baseDist: dist,
+        speed: (0.001 + Math.random() * 0.004) * (Math.random() < 0.5 ? 1 : 0.6),
+        r: Math.random() * 1.4 + 0.2,
+        alpha: Math.random() * 0.7 + 0.15,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: Math.random() * 0.012 + 0.004,
+        wobble: Math.random() * 25,
+        wobbleSpeed: Math.random() * 0.015 + 0.008,
+      });
+    }
+  }
+
+  function draw() {
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    const cx = w / 2;
+    const cy = h / 2;
+    time++;
+
+    // Soft fade — leaves motion trails
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.18)';
+    ctx.fillRect(0, 0, w, h);
+
+    for (const p of particles) {
+      p.angle += p.speed;
+      p.pulse += p.pulseSpeed;
+      const wobbleOffset = Math.sin(time * p.wobbleSpeed) * p.wobble;
+      const dist = p.baseDist + wobbleOffset;
+
+      const x = cx + Math.cos(p.angle) * dist;
+      const y = cy + Math.sin(p.angle) * dist * 0.6;
+
+      const flicker = 0.5 + 0.5 * Math.sin(p.pulse);
+      const a = p.alpha * flicker;
+
+      // Main particle
+      ctx.beginPath();
+      ctx.arc(x, y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245, 158, 11, ${a})`;
+      ctx.fill();
+
+      // Soft glow
+      if (p.r > 0.7) {
+        ctx.beginPath();
+        ctx.arc(x, y, p.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 158, 11, ${a * 0.12})`;
+        ctx.fill();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  seed();
+  draw();
+  window.addEventListener('resize', () => { resize(); seed(); });
+})();
+
+// ---- Card glow tracking ----
+document.addEventListener('mousemove', (e) => {
+  const cards = document.querySelectorAll('.quote, .step, .command-card, .agent-card');
+  for (const card of cards) {
+    const glow = card.querySelector('.card-glow');
+    if (!glow) continue;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    glow.style.left = x + 'px';
+    glow.style.top = y + 'px';
+  }
+});
+
+// ---- Parallax orbs on scroll ----
+const parallaxOrbs = document.querySelectorAll('[data-parallax]');
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      const scrollY = window.scrollY;
+      parallaxOrbs.forEach(orb => {
+        const speed = parseFloat(orb.dataset.parallax) || 0.03;
+        const offset = scrollY * speed;
+        orb.style.transform = `translateY(${-offset}px)`;
+      });
+      ticking = false;
+    });
+    ticking = true;
+  }
+}, { passive: true });
+
 // ---- Terminal cycling demos ----
 const demos = [
   {
     cmd: '> /qa-toolkit:bug-report The checkout page crashes with long addresses',
     lines: [
       { cls: 'line-out', text: 'Detecting project context...' },
-      { cls: 'line-key', text: 'Stack: <span class="line-val">React · Node.js · Jest · GitHub Actions</span>' },
+      { cls: 'line-key', text: 'Stack: <span class="line-val">React \u00b7 Node.js \u00b7 Jest \u00b7 GitHub Actions</span>' },
       { cls: 'line-key', text: 'Tracker: <span class="line-val">GitHub Issues</span>' },
       { cls: 'line-spacer', text: '' },
       { cls: 'line-key', text: 'Title: <span class="line-val">Checkout crashes on addresses &gt; 60 chars [P1]</span>' },
       { cls: 'line-key', text: 'Actual: <span class="line-val">TypeError: Cannot read property \'length\'</span>' },
-      { cls: 'line-out', text: 'Saved → qa-artifacts/bug-reports/2026-03-06-checkout-crash.md' },
+      { cls: 'line-out', text: 'Saved \u2192 qa-artifacts/bug-reports/2026-03-06-checkout-crash.md' },
     ]
   },
   {
     cmd: '> /qa-toolkit:pr-review feature/new-auth-flow',
     lines: [
-      { cls: 'line-out', text: 'Reading diff · 12 files changed...' },
-      { cls: 'line-key', text: 'Risk Level: <span class="line-val line-amber">HIGH — auth flow changed</span>' },
-      { cls: 'line-key', text: 'Affected flows: <span class="line-val">login · session · password-reset</span>' },
+      { cls: 'line-out', text: 'Reading diff \u00b7 12 files changed...' },
+      { cls: 'line-key', text: 'Risk Level: <span class="line-val line-amber">HIGH \u2014 auth flow changed</span>' },
+      { cls: 'line-key', text: 'Affected flows: <span class="line-val">login \u00b7 session \u00b7 password-reset</span>' },
       { cls: 'line-spacer', text: '' },
       { cls: 'line-key', text: 'QA Checklist: <span class="line-val">7 items generated</span>' },
-      { cls: 'line-out', text: '  ✓ Verify session expiry after token rotation' },
-      { cls: 'line-out', text: 'Saved → qa-artifacts/pr-reviews/pr-review-2026-03-06-auth-flow.md' },
+      { cls: 'line-out', text: '  \u2713 Verify session expiry after token rotation' },
+      { cls: 'line-out', text: 'Saved \u2192 qa-artifacts/pr-reviews/pr-review-2026-03-06-auth-flow.md' },
     ]
   },
   {
     cmd: '> /qa-toolkit:test-cases User registration with email verification',
     lines: [
       { cls: 'line-out', text: 'Reading project context...' },
-      { cls: 'line-key', text: 'Framework: <span class="line-val">Playwright detected — using BDD format</span>' },
+      { cls: 'line-key', text: 'Framework: <span class="line-val">Playwright detected \u2014 using BDD format</span>' },
       { cls: 'line-spacer', text: '' },
-      { cls: 'line-key', text: 'TC-REG-01 <span class="line-val">P0 · Happy path registration</span>' },
-      { cls: 'line-key', text: 'TC-REG-02 <span class="line-val">P0 · Duplicate email rejected</span>' },
-      { cls: 'line-key', text: 'TC-REG-03 <span class="line-val">P1 · Verification link expires</span>' },
-      { cls: 'line-out', text: 'Saved → qa-artifacts/test-cases/test-cases-2026-03-06-registration.md' },
+      { cls: 'line-key', text: 'TC-REG-01 <span class="line-val">P0 \u00b7 Happy path registration</span>' },
+      { cls: 'line-key', text: 'TC-REG-02 <span class="line-val">P0 \u00b7 Duplicate email rejected</span>' },
+      { cls: 'line-key', text: 'TC-REG-03 <span class="line-val">P1 \u00b7 Verification link expires</span>' },
+      { cls: 'line-out', text: 'Saved \u2192 qa-artifacts/test-cases/test-cases-2026-03-06-registration.md' },
     ]
   }
 ];
@@ -341,9 +611,13 @@ function renderDemo(idx, animate) {
     div.className = line.cls || 'line-spacer';
     div.innerHTML = line.text;
     div.style.opacity = '0';
-    div.style.transition = 'opacity 0.35s ease';
+    div.style.transform = 'translateY(4px)';
+    div.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
     terminalBody.appendChild(div);
-    setTimeout(() => { div.style.opacity = '1'; }, revealDelay + i * 200);
+    setTimeout(() => {
+      div.style.opacity = '1';
+      div.style.transform = 'translateY(0)';
+    }, revealDelay + i * 220);
   });
 
   const cursor = document.createElement('span');
@@ -363,19 +637,59 @@ function cycleDemo() {
 renderDemo(0, true);
 setInterval(cycleDemo, 7000);
 
-// ---- Scroll reveal ----
-const observer = new IntersectionObserver((entries) => {
+// ---- Stat count-up ----
+function animateStats() {
+  document.querySelectorAll('.stat-num[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    if (target === 0) { el.textContent = '0'; return; }
+    let current = 0;
+    const step = Math.max(1, Math.floor(target / 20));
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(interval); }
+      el.textContent = current;
+    }, 40);
+  });
+  document.querySelectorAll('.stat-num[data-count-text]').forEach(el => {
+    const text = el.dataset.countText;
+    const num = parseInt(text, 10);
+    let current = 0;
+    const interval = setInterval(() => {
+      current++;
+      if (current >= num) { current = num; clearInterval(interval); el.textContent = text; }
+      else { el.textContent = current; }
+    }, 60);
+  });
+}
+
+const statsStrip = document.querySelector('.stats-strip');
+let statsCounted = false;
+const statsObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && !statsCounted) {
+    statsCounted = true;
+    setTimeout(animateStats, 200);
+    statsObserver.disconnect();
+  }
+}, { threshold: 0.5 });
+statsObserver.observe(statsStrip);
+
+// ---- Scroll reveal (one-way — stays visible once shown) ----
+const animSelectors = '[data-animate], [data-animate-stagger], [data-animate-slide], [data-animate-scale]';
+
+const scrollObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
+      scrollObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.08 });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -60px 0px'
+});
 
-document.querySelectorAll('[data-animate]').forEach((el, i) => {
-  el.style.transitionDelay = (i % 4 * 0.1) + 's';
-  observer.observe(el);
+document.querySelectorAll(animSelectors).forEach(el => {
+  scrollObserver.observe(el);
 });
 </script>
 

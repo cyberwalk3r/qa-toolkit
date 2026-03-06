@@ -1,6 +1,6 @@
 ---
 name: api-test
-description: Generate state-aware API test suites with contract validation from OpenAPI/Swagger specs as cURL, Postman, or Playwright.
+description: Generate API test suites from endpoint descriptions, OpenAPI/Swagger specs, or workflow descriptions — as cURL commands, Postman collections, or Playwright API tests with contract validation. Use this skill whenever a user wants to test an API endpoint, verify REST API behavior, validate against a spec, or asks for API test coverage.
 ---
 
 # API Test Builder

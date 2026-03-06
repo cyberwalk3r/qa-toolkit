@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Analyze PR changes with state-aware risk assessment, change-impact analysis, and QA checklist grounded in project context.
+description: Analyze PR changes with risk assessment, change-impact analysis, and a diff-specific QA checklist grounded in project context. Use this skill whenever a user shares a PR link, branch name, diff, or list of changed files and wants to know what to test — even a casual description like "I just changed the auth module" is enough to start a review.
 ---
 
 # PR Review Assistant

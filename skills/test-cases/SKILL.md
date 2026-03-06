@@ -1,6 +1,6 @@
 ---
 name: test-cases
-description: Generate state-aware test cases from requirements in table, Gherkin BDD, checklist, or JSON format with traceability IDs and inline risk annotations.
+description: Generate structured test cases from any requirements input — user stories, PRDs, acceptance criteria, Jira tickets, or vague feature descriptions — in table, Gherkin, checklist, or JSON format with traceability IDs. Use this skill whenever a user provides requirements and wants to know what to test, asks "write test cases for X", or shares a feature description, even informally.
 ---
 
 # Test Case Generator

@@ -1,6 +1,6 @@
 ---
 name: flaky-test-diagnosis
-description: Diagnose flaky tests by analyzing test code and failure logs to identify root causes with specific fix recommendations.
+description: Diagnose flaky tests with root cause classification (timing, shared state, environment, etc.) and concrete fix recommendations with code examples. Use this skill whenever a user mentions intermittently failing tests, CI flakiness, tests that "sometimes pass", or shares test output with inconsistent results — works with test code alone or with failure logs.
 ---
 
 # Flaky Test Diagnoser

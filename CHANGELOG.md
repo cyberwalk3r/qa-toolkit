@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.0] — 2026-03-06
+
+QA Toolkit v2.0 is a ground-up rethink of how the plugin operates. The core idea: every skill now reads your project state before producing output, so artifacts build on each other rather than starting cold every time.
+
+### Added
+- **State-aware skill system** — all skills read `.qa-config.json` on invocation, adapt output to detected stack, and write findings back so subsequent skills have context
+- **Shared references** (`skills/shared/references/`) — `context-preamble.md`, `state-integration.md`, `output-formats.md`, `artifact-organization.md` loaded by all skills to enforce consistent behavior
+- **5 new skills**: `test-plan`, `exploratory-testing`, `coverage-gap`, `risk-prioritization`, `flaky-test-diagnosis`
+- **Multi-format output** — skills produce output in the format best suited to the artifact type (Markdown reports, Gherkin, cURL/Postman/Playwright, JSON/CSV/SQL, etc.)
+- **Redesigned agents** — `qa-reviewer`, `qa-lead`, `qa-explorer` rebuilt with explicit tool restrictions, typed return contracts, and persistent memory across turns
+
+### Changed
+- **5 redesigned skills**: `e2e-test`, `bug-report`, `api-test`, `regression-planner`, `pr-review` — all updated for state-awareness and multi-format output
+- Agent personas now define tool access boundaries (not just tone), making subagent behavior predictable and composable
+
+### Fixed
+- Updated test suite to match v2 skill behavior (stale v1.x assertions removed)
+
 ## [1.1.0] — 2026-02-23
 
 ### Fixed

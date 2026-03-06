@@ -23,7 +23,7 @@ skills/<name>/scripts/      — Helper scripts (e.g., Playwright runner)
 ### Skills
 - `SKILL.md` must have YAML frontmatter with `name` and `description` (one sentence)
 - Skills produce one-shot structured output and save to the configured output directory
-- Each skill reads `<outputDir>/.qa-config.json` for project context
+- Each skill reads `<outputDir>/.qa-context.json` for project context
 - Reference files contain non-obvious, specific guidance — not generic info
 - Include a "Suggested Next Steps" section with conditional cross-references to related skills
 

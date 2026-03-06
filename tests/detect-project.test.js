@@ -17,8 +17,10 @@ function runDetect(cwd) {
 }
 
 function readConfig(cwd, outputDir = 'qa-artifacts') {
-    const configPath = path.join(cwd, outputDir, '.qa-config.json');
-    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const contextPath = path.join(cwd, outputDir, '.qa-context.json');
+    const ctx = JSON.parse(fs.readFileSync(contextPath, 'utf8'));
+    // Flatten detection fields to the top level for backwards-compatible test assertions
+    return { ...ctx.detection, detectedAt: ctx.detectedAt, outputDir: ctx.outputDir };
 }
 
 describe('detect-project.js', () => {
@@ -38,7 +40,7 @@ describe('detect-project.js', () => {
         assert.ok(stdout.includes('No previous QA artifacts found'));
     });
 
-    it('creates .qa-config.json in output directory', () => {
+    it('creates .qa-context.json in output directory', () => {
         // Config was created by the previous test run
         const config = readConfig(tmpDir);
         assert.equal(config.outputDir, 'qa-artifacts');
@@ -189,7 +191,7 @@ describe('detect-project.js', () => {
 
         const qaDir = path.join(projectDir, 'qa-artifacts');
         const entries = fs.readdirSync(qaDir).sort();
-        // Should only have state files, no subdirectories (v2 writes .qa-context.json + legacy .qa-config.json)
+        // Should only have state files, no subdirectories (v2 writes .qa-context.json + .qa-session.json)
         const dirs = entries.filter(e => fs.statSync(path.join(qaDir, e)).isDirectory());
         assert.deepEqual(dirs, []);
     });

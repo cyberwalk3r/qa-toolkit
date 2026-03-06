@@ -8,7 +8,7 @@ QA Toolkit is a Claude Code plugin. It has three moving parts:
 - **Agents** (`agents/<name>.md`) — conversational personas for multi-turn QA work
 - **Scripts** (`scripts/`) — Node.js hooks that run on session start/end (auto-detection, activity logging)
 
-All skills follow the **state-aware pattern**: read project context from `.qa-config.json` → adapt output to the detected stack → write findings back so the next skill has more to work with.
+All skills follow the **state-aware pattern**: read project context from `.qa-context.json` → adapt output to the detected stack → write findings back so the next skill has more to work with.
 
 ## How to Contribute
 
@@ -34,15 +34,15 @@ skills/<skill-name>/
 
 - YAML frontmatter must have `name` and `description` (one sentence max)
 - Begin with the context preamble: load `skills/shared/references/context-preamble.md` to read project state
-- Adapt output based on detected `languages`, `frameworks`, `testFrameworks` from `.qa-config.json`
-- Save artifacts to `<outputDir>/<category>/` (read `outputDir` from `.qa-config.json`)
+- Adapt output based on detected `languages`, `frameworks`, `testFrameworks` from `.qa-context.json`
+- Save artifacts to `<outputDir>/<category>/` (read `outputDir` from `.qa-context.json`)
 - End with a "Suggested Next Steps" section with conditional cross-references to related skills
 
 ### State-aware pattern
 
 Every skill should follow this flow:
 
-1. **Read state** — check if `.qa-config.json` exists; if yes, load it for stack context
+1. **Read state** — check if `.qa-context.json` exists; if yes, load it for stack context
 2. **Adapt output** — use detected frameworks to shape format (e.g., Jest vs Pytest syntax, Jira vs GitHub Issues format)
 3. **Write findings** — append relevant findings to a skill-specific log in `<outputDir>/` so subsequent skills have more context
 

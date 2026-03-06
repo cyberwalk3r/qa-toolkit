@@ -3,24 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QA Toolkit — QA that thinks for itself</title>
-  <meta name="description" content="A Claude Code plugin that auto-detects your stack and produces structured QA artifacts from plain English descriptions.">
+  <title>QA Toolkit — AI-powered QA slash commands for Claude Code</title>
+  <meta name="description" content="QA Toolkit is a free Claude Code plugin with 15 slash commands for test case generation, PR review, bug reports, regression planning, and exploratory testing. Auto-detects your stack. Zero config.">
+  <meta name="keywords" content="Claude Code plugin, QA automation, test case generation, PR review tool, bug report generator, regression testing, playwright, jest, pytest, quality assurance AI, software testing">
+  <meta name="author" content="cyberwalk3r">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#f59e0b">
+  <link rel="canonical" href="https://cyberwalk3r.github.io/qa-toolkit/">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="QA Toolkit — QA that thinks for itself">
-  <meta property="og:description" content="15 slash commands. Auto-detects your stack. Produces structured QA artifacts from plain English descriptions.">
+  <meta property="og:title" content="QA Toolkit — AI-powered QA slash commands for Claude Code">
+  <meta property="og:description" content="15 slash commands for test cases, PR reviews, bug reports, regression plans, and more. Auto-detects your stack. Free Claude Code plugin.">
   <meta property="og:image" content="https://cyberwalk3r.github.io/qa-toolkit/og-image.png">
   <meta property="og:url" content="https://cyberwalk3r.github.io/qa-toolkit/">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="QA Toolkit">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="QA Toolkit — QA that thinks for itself">
-  <meta name="twitter:description" content="15 slash commands. Auto-detects your stack. Produces structured QA artifacts from plain English descriptions.">
+  <meta name="twitter:title" content="QA Toolkit — AI-powered QA slash commands for Claude Code">
+  <meta name="twitter:description" content="15 slash commands for test cases, PR reviews, bug reports, regression plans, and more. Auto-detects your stack. Free Claude Code plugin.">
   <meta name="twitter:image" content="https://cyberwalk3r.github.io/qa-toolkit/og-image.png">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "QA Toolkit",
+    "description": "A Claude Code plugin providing 15 QA slash commands for test case generation, PR review, bug reports, regression planning, exploratory testing, and more. Auto-detects your tech stack.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "url": "https://cyberwalk3r.github.io/qa-toolkit/",
+    "downloadUrl": "https://github.com/cyberwalk3r/qa-toolkit",
+    "author": {
+      "@type": "Person",
+      "name": "cyberwalk3r",
+      "url": "https://github.com/cyberwalk3r"
+    },
+    "softwareVersion": "2.0.0",
+    "license": "https://opensource.org/licenses/MIT"
+  }
+  </script>
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -28,64 +60,78 @@
 
 <nav>
   <span class="logo">/qa-toolkit</span>
-  <div>
+  <div class="nav-links">
     <a href="#how-it-works">How It Works</a>
     <a href="#commands">Commands</a>
     <a href="#agents">Agents</a>
     <a href="#install">Install</a>
-    <a href="https://github.com/cyberwalk3r/qa-toolkit" target="_blank">GitHub</a>
+    <a href="https://github.com/cyberwalk3r/qa-toolkit" target="_blank" rel="noopener noreferrer">GitHub</a>
   </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
-  <h1>QA that <span>thinks for itself.</span></h1>
-  <p class="tagline">Describe what you're testing. Get a structured, stack-aware artifact — instantly. No templates. No formatting. No busywork.</p>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
 
-  <div class="install-block">
-    <span class="prompt">$</span>
-    <span id="install-cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
-    <button class="copy-btn" onclick="copyInstall()">copy</button>
-  </div>
+  <div class="hero-content">
+    <div class="hero-badge">Claude Code Plugin &nbsp;·&nbsp; v2.0 &nbsp;·&nbsp; Free &amp; Open Source</div>
 
-  <div class="terminal" aria-label="Terminal demo">
-    <div class="terminal-bar">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-      <span class="terminal-title">Claude Code</span>
+    <h1>QA that <span class="shimmer">thinks for itself.</span></h1>
+    <p class="tagline">Describe what you're testing. Get a structured, stack-aware artifact — instantly. No templates. No formatting. No busywork.</p>
+
+    <div class="install-block">
+      <span class="prompt">$</span>
+      <span id="install-cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
+      <button class="copy-btn" onclick="copyInstall()" aria-label="Copy install command">copy</button>
     </div>
-    <div class="terminal-body">
-      <div class="line-cmd typewriter">&gt; /qa-toolkit:bug-report The checkout page crashes with long addresses</div>
-      <br>
-      <div class="line-out" style="animation-delay:2.5s">Detecting project context...</div>
-      <div class="line-key">Stack: <span class="line-val">React · Node.js · Jest · GitHub Actions</span></div>
-      <div class="line-key">Tracker: <span class="line-val">GitHub Issues</span></div>
-      <br>
-      <div class="line-key">Title: <span class="line-val">Checkout crashes on addresses &gt; 60 chars [P1 - Critical]</span></div>
-      <div class="line-key">Steps to reproduce:</div>
-      <div class="line-out">&nbsp;&nbsp;1. Navigate to /checkout</div>
-      <div class="line-out">&nbsp;&nbsp;2. Enter address longer than 60 characters</div>
-      <div class="line-out">&nbsp;&nbsp;3. Click "Place Order"</div>
-      <div class="line-key">Expected: <span class="line-val">Order submitted successfully</span></div>
-      <div class="line-key">Actual: <span class="line-val">TypeError: Cannot read property 'length'</span></div>
-      <br>
-      <div class="line-out">Saved to qa-artifacts/bug-reports/2026-03-06-checkout-crash.md</div>
-      <span class="cursor"></span>
+
+    <div class="stats-strip" aria-label="Quick stats">
+      <div class="stat">
+        <span class="stat-num">15</span>
+        <span class="stat-label">slash commands</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat">
+        <span class="stat-num">3</span>
+        <span class="stat-label">QA agents</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat">
+        <span class="stat-num">0</span>
+        <span class="stat-label">config required</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat">
+        <span class="stat-num">8+</span>
+        <span class="stat-label">tech stacks</span>
+      </div>
     </div>
+
+    <div class="terminal" aria-label="Terminal demo">
+      <div class="terminal-bar" aria-hidden="true">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="terminal-title">Claude Code</span>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+
+    <p class="hero-hint">↓ scroll to see all 15 commands</p>
   </div>
 </section>
 
-<!-- What you stop doing -->
+<!-- Value props -->
 <div class="quotes">
   <div class="quotes-inner">
-    <div class="quote">
+    <div class="quote" data-animate>
       <p><strong>Bug reports in seconds.</strong> Describe what broke. Get back severity classification, steps to reproduce, expected vs actual, and environment fields — formatted for your tracker, not a generic template.</p>
     </div>
-    <div class="quote">
+    <div class="quote" data-animate>
       <p><strong>PR reviews that actually help.</strong> It reads the diff, maps which files touch which user flows, and writes a QA checklist grounded in what actually changed — not a checklist you've seen a hundred times.</p>
     </div>
-    <div class="quote">
+    <div class="quote" data-animate>
       <p><strong>Artifacts that fit your stack.</strong> It knows you're using Jest, not Pytest. It knows your CI runs on GitHub Actions. The output matches what your team already does, automatically.</p>
     </div>
   </div>
@@ -98,17 +144,17 @@
     <h2>Three steps. That's it.</h2>
     <p class="section-sub">Install once. Open any project. It scans your stack before you type your first command.</p>
     <div class="steps">
-      <div class="step">
+      <div class="step" data-animate>
         <div class="step-num">01</div>
         <h3>Install the plugin</h3>
         <p>One command. Works with any project — React, Django, .NET, Go, whatever you're building.</p>
       </div>
-      <div class="step">
+      <div class="step" data-animate>
         <div class="step-num">02</div>
         <h3>Open your project</h3>
         <p>On session start, QA Toolkit scans your stack and saves context. Knows your frameworks, test tools, and CI setup automatically.</p>
       </div>
-      <div class="step">
+      <div class="step" data-animate>
         <div class="step-num">03</div>
         <h3>Describe what you need</h3>
         <p>Type a slash command in plain English. Because it already knows your stack, the output uses the right format, the right frameworks, the right test runner.</p>
@@ -118,13 +164,13 @@
 </section>
 
 <!-- Commands -->
-<section id="commands" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+<section id="commands" class="commands-section">
   <div class="container">
     <div class="section-label">Commands</div>
     <h2>15 slash commands. Every QA workflow covered.</h2>
-    <p class="section-sub">Grouped by where they fit in your workflow. Each one produces a formatted artifact saved to <code style="color:var(--amber);font-family:var(--font-mono);font-size:0.85em">qa-artifacts/</code>.</p>
+    <p class="section-sub">Grouped by where they fit in your workflow. Each one produces a formatted artifact saved to <code class="inline-code">qa-artifacts/</code>.</p>
 
-    <div class="phase-group">
+    <div class="phase-group" data-animate>
       <div class="phase-label">Authoring</div>
       <div class="command-grid">
         <div class="command-card"><code>/qa-toolkit:test-cases</code><p>Test cases from requirements — table, Gherkin, or checklist format</p></div>
@@ -135,7 +181,7 @@
       </div>
     </div>
 
-    <div class="phase-group">
+    <div class="phase-group" data-animate>
       <div class="phase-label">Review</div>
       <div class="command-grid">
         <div class="command-card"><code>/qa-toolkit:pr-review</code><p>Risk-flagged PR review with plain-English summary and QA checklist</p></div>
@@ -144,7 +190,7 @@
       </div>
     </div>
 
-    <div class="phase-group">
+    <div class="phase-group" data-animate>
       <div class="phase-label">Release</div>
       <div class="command-grid">
         <div class="command-card"><code>/qa-toolkit:regression-planner</code><p>Risk-based regression plan with time estimates</p></div>
@@ -153,7 +199,7 @@
       </div>
     </div>
 
-    <div class="phase-group">
+    <div class="phase-group" data-animate>
       <div class="phase-label">Analysis</div>
       <div class="command-grid">
         <div class="command-card"><code>/qa-toolkit:coverage-gap</code><p>Coverage gap analysis against requirements or test plan</p></div>
@@ -172,28 +218,31 @@
     <h2>When you need a conversation, not a document.</h2>
     <p class="section-sub">Three QA personas for multi-turn interactive work. They remember context across the conversation and adapt as you share more.</p>
     <div class="agent-grid">
-      <div class="agent-card">
+      <div class="agent-card" data-animate>
+        <div class="agent-icon" aria-hidden="true">◈</div>
         <h3>qa-reviewer</h3>
         <p class="role">The Code Reviewer's QA Brain</p>
         <p>Walk me through this PR. What should I actually be testing? Translates code changes into testing impact in plain English.</p>
       </div>
-      <div class="agent-card">
+      <div class="agent-card" data-animate>
+        <div class="agent-icon" aria-hidden="true">◈</div>
         <h3>qa-explorer</h3>
         <p class="role">The Edge Case Hunter</p>
         <p>Help me find what could break in this feature. Generates exploratory test charters and surfaces edge cases you wouldn't think to test.</p>
       </div>
-      <div class="agent-card">
+      <div class="agent-card" data-animate>
+        <div class="agent-icon" aria-hidden="true">◈</div>
         <h3>qa-lead</h3>
         <p class="role">The Release Decision Maker</p>
         <p>Let's decide if we're ready to ship. Makes release decisions, plans regression scope, and produces executive summaries.</p>
       </div>
     </div>
 
-    <div class="v2-callout">
+    <div class="v2-callout" data-animate>
       <h3>What's New in v2.0</h3>
       <ul>
         <li>State-aware skills — every command reads your detected project context</li>
-        <li>15 skills — 5 new in v2: test-plan, exploratory-testing, coverage-gap, risk-prioritization, flaky-test-diagnosis</li>
+        <li>15 skills — 5 new: test-plan, exploratory-testing, coverage-gap, risk-prioritization, flaky-test-diagnosis</li>
         <li>Redesigned agents — explicit tool boundaries, typed return contracts, persistent memory</li>
         <li>Multi-format output — artifacts in the format that actually fits the deliverable</li>
         <li>Shared references — consistent behavior across all skills</li>
@@ -208,28 +257,126 @@
     <div class="section-label">Install</div>
     <h2>One command to install. Zero to configure.</h2>
     <p class="section-sub">Works with any project. Configurable if you want — but you don't have to.</p>
-    <div class="code-block"><span class="comment"># From GitHub</span>
+    <div class="code-block" data-animate><span class="comment"># From GitHub</span>
 <span class="cmd">claude plugin add github:cyberwalk3r/qa-toolkit</span>
 
 <span class="comment"># Local development</span>
 <span class="cmd">claude plugin add ./qa-toolkit</span></div>
-    <p style="font-size:0.875rem;color:var(--text-muted)">On first session, auto-detection runs and saves your project context to <code style="color:var(--amber);font-family:var(--font-mono);font-size:0.85em">qa-artifacts/.qa-config.json</code>. Every subsequent command reads from it.</p>
+    <p class="install-note">On first session, auto-detection runs and saves your project context to <code class="inline-code">qa-artifacts/.qa-context.json</code>. Every subsequent command reads from it.</p>
   </div>
 </section>
 
 <footer>
-  <p>MIT License &nbsp;·&nbsp; <a href="https://github.com/cyberwalk3r/qa-toolkit" target="_blank">GitHub</a> &nbsp;·&nbsp; Built for Claude Code</p>
+  <p>MIT License &nbsp;·&nbsp; <a href="https://github.com/cyberwalk3r/qa-toolkit" target="_blank" rel="noopener noreferrer">GitHub</a> &nbsp;·&nbsp; Built for Claude Code</p>
 </footer>
 
 <script>
+// ---- Copy install command ----
 function copyInstall() {
   const text = document.getElementById('install-cmd').textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.querySelector('.copy-btn');
     btn.textContent = 'copied!';
-    setTimeout(() => btn.textContent = 'copy', 2000);
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
   });
 }
+
+// ---- Terminal cycling demos ----
+const demos = [
+  {
+    cmd: '> /qa-toolkit:bug-report The checkout page crashes with long addresses',
+    lines: [
+      { cls: 'line-out', text: 'Detecting project context...' },
+      { cls: 'line-key', text: 'Stack: <span class="line-val">React · Node.js · Jest · GitHub Actions</span>' },
+      { cls: 'line-key', text: 'Tracker: <span class="line-val">GitHub Issues</span>' },
+      { cls: 'line-spacer', text: '' },
+      { cls: 'line-key', text: 'Title: <span class="line-val">Checkout crashes on addresses &gt; 60 chars [P1]</span>' },
+      { cls: 'line-key', text: 'Actual: <span class="line-val">TypeError: Cannot read property \'length\'</span>' },
+      { cls: 'line-out', text: 'Saved → qa-artifacts/bug-reports/2026-03-06-checkout-crash.md' },
+    ]
+  },
+  {
+    cmd: '> /qa-toolkit:pr-review feature/new-auth-flow',
+    lines: [
+      { cls: 'line-out', text: 'Reading diff · 12 files changed...' },
+      { cls: 'line-key', text: 'Risk Level: <span class="line-val line-amber">HIGH — auth flow changed</span>' },
+      { cls: 'line-key', text: 'Affected flows: <span class="line-val">login · session · password-reset</span>' },
+      { cls: 'line-spacer', text: '' },
+      { cls: 'line-key', text: 'QA Checklist: <span class="line-val">7 items generated</span>' },
+      { cls: 'line-out', text: '  ✓ Verify session expiry after token rotation' },
+      { cls: 'line-out', text: 'Saved → qa-artifacts/pr-reviews/pr-review-2026-03-06-auth-flow.md' },
+    ]
+  },
+  {
+    cmd: '> /qa-toolkit:test-cases User registration with email verification',
+    lines: [
+      { cls: 'line-out', text: 'Reading project context...' },
+      { cls: 'line-key', text: 'Framework: <span class="line-val">Playwright detected — using BDD format</span>' },
+      { cls: 'line-spacer', text: '' },
+      { cls: 'line-key', text: 'TC-REG-01 <span class="line-val">P0 · Happy path registration</span>' },
+      { cls: 'line-key', text: 'TC-REG-02 <span class="line-val">P0 · Duplicate email rejected</span>' },
+      { cls: 'line-key', text: 'TC-REG-03 <span class="line-val">P1 · Verification link expires</span>' },
+      { cls: 'line-out', text: 'Saved → qa-artifacts/test-cases/test-cases-2026-03-06-registration.md' },
+    ]
+  }
+];
+
+let currentDemo = 0;
+const terminalBody = document.getElementById('terminal-body');
+
+function renderDemo(idx, animate) {
+  const demo = demos[idx];
+  terminalBody.innerHTML = '';
+
+  const cmdDiv = document.createElement('div');
+  cmdDiv.className = 'line-cmd' + (animate ? ' typewriter' : '');
+  cmdDiv.textContent = demo.cmd;
+  terminalBody.appendChild(cmdDiv);
+
+  const revealDelay = animate ? 2600 : 0;
+
+  demo.lines.forEach((line, i) => {
+    const div = document.createElement('div');
+    div.className = line.cls || 'line-spacer';
+    div.innerHTML = line.text;
+    div.style.opacity = '0';
+    div.style.transition = 'opacity 0.35s ease';
+    terminalBody.appendChild(div);
+    setTimeout(() => { div.style.opacity = '1'; }, revealDelay + i * 200);
+  });
+
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  terminalBody.appendChild(cursor);
+}
+
+function cycleDemo() {
+  terminalBody.style.opacity = '0';
+  setTimeout(() => {
+    currentDemo = (currentDemo + 1) % demos.length;
+    terminalBody.style.opacity = '1';
+    renderDemo(currentDemo, true);
+  }, 400);
+}
+
+renderDemo(0, true);
+setInterval(cycleDemo, 7000);
+
+// ---- Scroll reveal ----
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('[data-animate]').forEach((el, i) => {
+  el.style.transitionDelay = (i % 4 * 0.1) + 's';
+  observer.observe(el);
+});
 </script>
 
 </body>

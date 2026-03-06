@@ -43,7 +43,6 @@ try {
 
 const configDir = path.join(projectRoot, outputDir);
 const contextPath = path.join(configDir, '.qa-context.json');
-const legacyConfigPath = path.join(configDir, '.qa-config.json');
 const stateManagerPath = path.join(pluginRoot, 'scripts', 'state-manager.js');
 
 // Detection markers
@@ -761,15 +760,6 @@ if (!fs.existsSync(configDir)) {
 const tmpContextPath = contextPath + '.tmp';
 fs.writeFileSync(tmpContextPath, JSON.stringify(projectState, null, 2));
 fs.renameSync(tmpContextPath, contextPath);
-
-// Backward compat: also write legacy .qa-config.json with detection data
-const legacyConfig = {
-    ...detection,
-    detectedAt: projectState.detectedAt,
-    projectRoot,
-    outputDir,
-};
-fs.writeFileSync(legacyConfigPath, JSON.stringify(legacyConfig, null, 2));
 
 // ---- Initialize session state ----
 

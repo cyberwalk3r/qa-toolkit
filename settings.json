@@ -1,5 +1,6 @@
 {
     "agent": "qa-reviewer",
     "outputDir": "qa-artifacts",
-    "hooksEnabled": true
+    "hooksEnabled": true,
+    "detectionBudgetMs": 500
 }

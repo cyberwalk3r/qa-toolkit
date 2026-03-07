@@ -1,9 +1,9 @@
 {
   "name": "qa-toolkit",
-  "version": "1.1.0",
-  "description": "Claude Code plugin for QA testers. Structured PR reviews, test case generation, bug reports, regression planning, and 6 more QA workflows. Auto-detects your tech stack. No code required.",
+  "version": "2.0.0",
+  "description": "Claude Code plugin with 15 QA skills and 3 agent personas. PR reviews, test cases, bug reports, regression plans, coverage gaps, risk analysis, and more. Auto-detects your tech stack.",
   "author": {
-    "name": "QA Skills"
+    "name": "cyberwalk3r"
   },
   "repository": {
     "type": "git",

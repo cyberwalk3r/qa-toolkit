@@ -18,7 +18,7 @@ Accept via `$ARGUMENTS`: scenario descriptions and optional flags. Examples:
 
 ### Step 1: Read State
 
-Read `skills/shared/references/state-integration.md` and execute the state reading commands:
+Read `shared/references/state-integration.md` and execute the state reading commands:
 
 ```bash
 PROJECT_STATE=$(node scripts/state-manager.js read project)
@@ -31,7 +31,7 @@ FEATURE=$(node scripts/state-manager.js read session featureUnderTest)
 
 Extract: tech stack, test frameworks, test directories, conventions, session feature, prior skill history.
 
-If no state available, use defaults per `skills/shared/references/cold-start-pattern.md`:
+If no state available, use defaults per `shared/references/cold-start-pattern.md`:
 - languages: [] (generic examples)
 - testFrameworks: [] (Playwright best-practice defaults)
 - featureUnderTest: null (derive from $ARGUMENTS)
@@ -117,7 +117,7 @@ For advanced patterns (fixture integration, POM best practices, waiting strategi
 
 ### Step 8: Generate Context Preamble
 
-Read `skills/shared/references/context-preamble.md` and generate the preamble blockquote.
+Read `shared/references/context-preamble.md` and generate the preamble blockquote.
 
 Include convention scan results in the preamble:
 - Which files were scanned for conventions
@@ -160,7 +160,7 @@ node scripts/state-manager.js merge session findings '{
 }'
 ```
 
-Check for prior invocations per `skills/shared/references/state-integration.md` section 4 (Prior Output Awareness). If same feature was tested before, note it but generate full output.
+Check for prior invocations per `shared/references/state-integration.md` section 4 (Prior Output Awareness). If same feature was tested before, note it but generate full output.
 
 ## Output Sections
 
@@ -173,7 +173,7 @@ Produce output in this order:
 5. **New page object scaffolds** -- if any, in separate code blocks matching existing POM style
 6. **Fixture updates** -- if custom fixtures needed, show additions to existing `fixtures.ts`
 7. **Run instructions** -- reference `scripts/run-test.js` with `--help` for options
-8. **Cold-start footer** -- if applicable, per `skills/shared/references/cold-start-pattern.md`
+8. **Cold-start footer** -- if applicable, per `shared/references/cold-start-pattern.md`
 9. **Suggested Next Steps** -- contextual recommendations
 
 ## Prior Output Awareness
@@ -189,11 +189,11 @@ Always generate full output regardless.
 
 | Reference | When to Load |
 |---|---|
-| `skills/shared/references/state-integration.md` | Always (step 1) |
-| `skills/shared/references/context-preamble.md` | Always (step 8) |
+| `shared/references/state-integration.md` | Always (step 1) |
+| `shared/references/context-preamble.md` | Always (step 8) |
 | `references/convention-scanner.md` | When Playwright detected AND no cached conventions (step 3) |
 | `references/playwright-patterns.md` | Always for advanced patterns (step 7) |
-| `skills/shared/references/cold-start-pattern.md` | When state reading returns empty (step 1) |
+| `shared/references/cold-start-pattern.md` | When state reading returns empty (step 1) |
 
 ## Save
 

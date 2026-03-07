@@ -6,7 +6,7 @@ const { execFileSync } = require('child_process');
 
 const realPluginRoot = path.join(__dirname, '..');
 const detectScript = path.join(realPluginRoot, 'scripts', 'detect-project.js');
-const saveScript = path.join(realPluginRoot, 'scripts', 'save-artifact.js');
+const saveScript = path.join(realPluginRoot, 'scripts', 'session-hook.js');
 
 // Use a temp plugin root with a modified settings.json to avoid mutating the real one
 function makeTempPluginRoot(overrides) {
@@ -48,7 +48,7 @@ describe('hooksEnabled toggle', () => {
         assert.ok(!fs.existsSync(path.join(projectDir, 'qa-artifacts')));
     });
 
-    it('save-artifact.js exits silently when hooksEnabled is false', () => {
+    it('session-hook.js exits silently when hooksEnabled is false', () => {
         const projectDir = path.join(tmpDir, 'disabled-save');
         fs.mkdirSync(projectDir, { recursive: true });
         const fakePluginRoot = makeTempPluginRoot({ hooksEnabled: false });
@@ -83,7 +83,7 @@ describe('hooksEnabled toggle', () => {
         }
     });
 
-    it('save-artifact.js rejects absolute outputDir', () => {
+    it('session-hook.js rejects absolute outputDir', () => {
         const projectDir = path.join(tmpDir, 'abs-save');
         fs.mkdirSync(projectDir, { recursive: true });
         const fakePluginRoot = makeTempPluginRoot({ outputDir: '/tmp/evil' });
@@ -113,6 +113,6 @@ describe('hooksEnabled toggle', () => {
         });
 
         assert.ok(stdout.includes('[QA Toolkit — Project Context]'));
-        assert.ok(fs.existsSync(path.join(projectDir, 'qa-artifacts', '.qa-config.json')));
+        assert.ok(fs.existsSync(path.join(projectDir, 'qa-artifacts', '.qa-context.json')));
     });
 });

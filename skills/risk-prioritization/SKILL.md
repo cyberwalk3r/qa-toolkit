@@ -1,6 +1,6 @@
 ---
 name: risk-prioritization
-description: Prioritize test areas by risk using change frequency, business criticality, and defect density to allocate testing effort effectively.
+description: Rank test areas by composite risk score — change frequency, business criticality, and defect density — to allocate testing effort where it matters most. Use this skill when a user asks "where should we focus testing?", needs to prioritize a large test surface, or wants a data-driven testing strategy for a sprint or release cycle.
 ---
 
 # Risk-Based Test Prioritizer

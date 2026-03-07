@@ -1,6 +1,6 @@
 ---
 name: regression-planner
-description: Analyze change impact with state-aware risk ranking, dependency awareness, and cross-skill consumption of prior PR review and bug report findings.
+description: Plan targeted regression testing by mapping impact radius, ranking risk, and recommending scope (Quick/Standard/Full). Use this skill when a user asks "what should we retest?", has just made changes and needs to know what's at risk, or is preparing for a release and needs to scope regression effort from a PR, file list, or feature description.
 ---
 
 # Regression Test Planner

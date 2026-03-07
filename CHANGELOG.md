@@ -1,5 +1,38 @@
 # Changelog
 
+## [2.0.1] — 2026-03-07
+
+### Added
+- `--dry-run` flag for `detect-project.js` — preview detection without writing files
+- Session end summary output showing promoted findings and modified artifact count
+- Skill budget validation (`validate-skill-budget.js`) added to CI pipeline
+- GitHub Pages documentation site (`docs/`)
+
+### Changed
+- Removed `.claude/settings.local.json` — plugins should not ship user-local settings; permissions are approved interactively on first use
+- Moved test files from `scripts/` to `tests/` directory
+
+### Fixed
+- README "Permissions & Side Effects" section now accurately describes interactive approval (not pre-approved settings)
+
+## [2.0.0] — 2026-03-06
+
+QA Toolkit v2.0 is a ground-up rethink of how the plugin operates. The core idea: every skill now reads your project state before producing output, so artifacts build on each other rather than starting cold every time.
+
+### Added
+- **State-aware skill system** — all skills read `.qa-context.json` on invocation, adapt output to detected stack, and write findings back so subsequent skills have context
+- **Shared references** (`skills/shared/references/`) — `context-preamble.md`, `state-integration.md`, `output-formats.md`, `artifact-organization.md` loaded by all skills to enforce consistent behavior
+- **5 new skills**: `test-plan`, `exploratory-testing`, `coverage-gap`, `risk-prioritization`, `flaky-test-diagnosis`
+- **Multi-format output** — skills produce output in the format best suited to the artifact type (Markdown reports, Gherkin, cURL/Postman/Playwright, JSON/CSV/SQL, etc.)
+- **Redesigned agents** — `qa-reviewer`, `qa-lead`, `qa-explorer` rebuilt with explicit tool restrictions, typed return contracts, and persistent memory across turns
+
+### Changed
+- **5 redesigned skills**: `e2e-test`, `bug-report`, `api-test`, `regression-planner`, `pr-review` — all updated for state-awareness and multi-format output
+- Agent personas now define tool access boundaries (not just tone), making subagent behavior predictable and composable
+
+### Fixed
+- Updated test suite to match v2 skill behavior (stale v1.x assertions removed)
+
 ## [1.1.0] — 2026-02-23
 
 ### Fixed
@@ -19,7 +52,7 @@
 - `hooksEnabled` toggle to disable hooks without removing the plugin
 - 27 automated tests using Node.js built-in test runner (zero dependencies)
 - GitHub Actions CI workflow running tests on Node 18/20/22
-- `.qa-config.json` schema documentation in README
+- `.qa-context.json` schema documentation in README
 - `.gitignore` suggestion step in setup skill workflow
 - "Permissions & Side Effects" section in README with `Bash(git:*)` mechanism explained
 - Contextual "Suggested Next Steps" cross-references in all skills

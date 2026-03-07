@@ -5,7 +5,7 @@
  *
  * Runs on Stop to promote session findings to project state,
  * archive the completed session, and log activity. Replaces
- * save-artifact.js with expanded state-aware functionality.
+ * the original save-artifact.js with expanded state-aware functionality.
  *
  * Each section (promote, archive, log) is independent -- a failure
  * in one does not prevent the others from running.
@@ -121,26 +121,47 @@ try {
 
 // ---- 3. Log activity (absorbs save-artifact.js functionality) ----
 
+const MAX_LOG_BYTES = 512 * 1024; // 512 KB
+
 try {
     if (!fs.existsSync(configDir)) {
         fs.mkdirSync(configDir, { recursive: true });
     }
 
+    // Rotate log if it exceeds size cap
+    try {
+        if (fs.existsSync(logPath)) {
+            const stat = fs.statSync(logPath);
+            if (stat.size > MAX_LOG_BYTES) {
+                const content = fs.readFileSync(logPath, 'utf8');
+                const lines = content.split('\n');
+                // Keep the most recent half of lines
+                const keepFrom = Math.floor(lines.length / 2);
+                const rotated = '--- log rotated ---\n' + lines.slice(keepFrom).join('\n');
+                fs.writeFileSync(logPath, rotated);
+            }
+        }
+    } catch { /* rotation failure is non-blocking */ }
+
     // Scan for recently modified artifacts (last 5 minutes)
     const recentFiles = [];
     const cutoff = Date.now() - 5 * 60 * 1000;
 
-    function walkDir(dir, cutoffMs, baseDir, results) {
+    const MAX_WALK_DEPTH = 10;
+
+    function walkDir(dir, cutoffMs, baseDir, results, depth) {
+        if (depth === undefined) depth = 0;
+        if (depth >= MAX_WALK_DEPTH) return;
         let entries;
         try {
             entries = fs.readdirSync(dir, { withFileTypes: true });
-        } catch { return; }
+        } catch { return; /* skip unreadable directories during artifact scan */ }
         for (const entry of entries) {
             if (entry.name.startsWith('.')) continue;
             if (entry.name === 'sessions') continue;
             const fullPath = path.join(dir, entry.name);
             if (entry.isDirectory()) {
-                walkDir(fullPath, cutoffMs, baseDir, results);
+                walkDir(fullPath, cutoffMs, baseDir, results, depth + 1);
             } else if (entry.isFile()) {
                 try {
                     const stat = fs.statSync(fullPath);
@@ -170,3 +191,10 @@ try {
 } catch (err) {
     console.error(`Failed to log activity: ${err.message}`);
 }
+
+// ---- Summary output ----
+
+const summaryParts = ['[QA Toolkit] Session ended.'];
+if (findingsCount > 0) summaryParts.push(`Findings promoted: ${findingsCount}`);
+if (typeof recentFiles !== 'undefined' && recentFiles.length > 0) summaryParts.push(`Artifacts modified: ${recentFiles.length}`);
+console.log(summaryParts.join(' '));

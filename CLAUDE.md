@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Claude Code plugin providing 10 QA skills (slash commands) and 3 agent personas. Auto-detects project tech stack and produces structured QA artifacts.
+A Claude Code plugin providing 15 QA skills (slash commands) and 3 agent personas. Auto-detects project tech stack and produces structured QA artifacts.
 
 ## Project Structure
 
@@ -11,7 +11,7 @@ A Claude Code plugin providing 10 QA skills (slash commands) and 3 agent persona
 settings.json               — Default agent and plugin settings
 hooks/hooks.json            — Event hooks (SessionStart, Stop)
 scripts/detect-project.js   — Auto-detection script (runs on SessionStart)
-scripts/save-artifact.js    — Activity logger (runs on Stop)
+scripts/session-hook.js     — State promotion, archival, activity logger (runs on Stop)
 agents/<name>.md            — Agent persona definitions (conversational, multi-turn)
 skills/<name>/SKILL.md      — Skill definitions (one-shot structured output)
 skills/<name>/references/   — Domain-specific knowledge files
@@ -21,9 +21,9 @@ skills/<name>/scripts/      — Helper scripts (e.g., Playwright runner)
 ## Conventions
 
 ### Skills
-- `SKILL.md` must have YAML frontmatter with `name` and `description` (one sentence)
+- `SKILL.md` must have YAML frontmatter with `name` and `description` (1-3 sentences covering what it does and when to trigger it)
 - Skills produce one-shot structured output and save to the configured output directory
-- Each skill reads `<outputDir>/.qa-config.json` for project context
+- Each skill reads `<outputDir>/.qa-context.json` for project context
 - Reference files contain non-obvious, specific guidance — not generic info
 - Include a "Suggested Next Steps" section with conditional cross-references to related skills
 

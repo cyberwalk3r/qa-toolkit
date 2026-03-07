@@ -1,6 +1,6 @@
 ---
 name: bug-report
-description: Generate structured bug reports with environment auto-fill from project state, severity boost from risk areas, and session state write-back.
+description: Transform any bug observation into a structured, tracker-ready bug report with auto-filled environment, severity classification, and duplicate search terms. Use this skill whenever a user describes something broken, unexpected behavior, a crash, an error message, or says things like "it doesn't work", "I found a bug", or "something's wrong with X" — even a single sentence produces a complete, ready-to-file report.
 ---
 
 # Bug Report Generator

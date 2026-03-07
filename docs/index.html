@@ -221,13 +221,13 @@
     <div class="mermaid-wrapper" data-animate-scale>
       <pre class="mermaid">
 graph LR
-    setup --> pr-review
-    pr-review --> regression-planner
-    regression-planner --> release-readiness
-    pr-review --> bug-report
-    regression-planner --> test-cases
-    test-cases --> e2e-test
-    test-cases --> test-data
+    setup["setup"] --> prreview["pr-review"]
+    prreview --> regplanner["regression-planner"]
+    regplanner --> releaseready["release-readiness"]
+    prreview --> bugreport["bug-report"]
+    regplanner --> testcases["test-cases"]
+    testcases --> e2etest["e2e-test"]
+    testcases --> testdata["test-data"]
       </pre>
     </div>
     <p class="install-note" data-animate>Run <code class="inline-code">/qa-toolkit:setup</code> first to confirm your detected stack, then follow the <strong>Suggested Next Steps</strong> at the bottom of each artifact.</p>

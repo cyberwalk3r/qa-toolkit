@@ -1,6 +1,6 @@
 ---
 name: test-data
-description: Generate realistic, privacy-safe synthetic test data with state-aware schema detection for JSON, CSV, or SQL output.
+description: Generate realistic, privacy-safe synthetic test data with schema-aware field generation for JSON, CSV, or SQL output. Use this skill whenever a user needs fake data for testing, asks for test fixtures, wants to seed a database, or needs data matching specific models — especially when they mention HIPAA/PII-safe requirements, specific record counts, or existing schema files.
 ---
 
 # Test Data Generator

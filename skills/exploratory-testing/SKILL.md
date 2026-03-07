@@ -1,6 +1,6 @@
 ---
 name: exploratory-testing
-description: Guide structured exploratory testing sessions with charters, heuristic prompts, time-boxing guidance, and session notes capture.
+description: Generate a complete exploratory testing session package — charter, filtered heuristic prompts, time-boxing check-ins, and session notes templates — in one shot. Use this skill when a user wants to do unscripted testing, asks "how do I explore this feature manually?", or needs a structured charter for session-based testing of any feature or user flow.
 ---
 
 # Exploratory Testing Session Guide

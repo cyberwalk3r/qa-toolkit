@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(git:*)",
-      "Skill(gsd:map-codebase)",
-      "Bash(node:*)"
-    ]
-  }
-}

@@ -14,10 +14,7 @@ outputDir = read settings.json -> outputDir (default: "qa-artifacts")
    - JSON parse error?  -> use empty defaults (do NOT error)
    - Schema mismatch?   -> use empty defaults (state-manager handles this)
 
-2. Fallback: if .qa-context.json not found, try <outputDir>/.qa-config.json
-   - Same handling: missing or corrupt -> empty defaults
-
-3. Try reading <outputDir>/.qa-session.json (if session context is relevant)
+2. Try reading <outputDir>/.qa-session.json (if session context is relevant)
    - Same handling: missing or corrupt -> empty defaults
 ```
 
@@ -96,7 +93,7 @@ If testFrameworks is empty:
 When a skill detects it ran without project context, append a footer guiding the user toward richer output.
 
 **Show the footer when:**
-- `.qa-context.json` was not found (and `.qa-config.json` fallback also missing), OR
+- `.qa-context.json` was not found, OR
 - `detection.languages` is empty or missing
 
 **Do NOT show the footer when:**

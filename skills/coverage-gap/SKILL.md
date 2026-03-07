@@ -1,6 +1,6 @@
 ---
 name: coverage-gap
-description: Analyze test coverage against requirements and code paths to identify untested areas with severity classification.
+description: Identify untested areas by comparing test files against source modules, tracing requirements to tests, and detecting missing test types — with severity classification per gap. Use this skill when a user asks "what aren't we testing?", wants gap analysis before a release, or needs to map requirements to test coverage.
 ---
 
 # Coverage Gap Analyzer

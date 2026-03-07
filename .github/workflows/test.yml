@@ -18,3 +18,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: node --test tests/*.test.js
+      - run: node scripts/validate-skill-budget.js

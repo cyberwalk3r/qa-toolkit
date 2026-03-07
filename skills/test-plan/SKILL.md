@@ -1,6 +1,6 @@
 ---
 name: test-plan
-description: Generate state-aware test plans from PRD or epic descriptions with scope, approach, environments, risks, and entry/exit criteria.
+description: Generate a comprehensive test plan from PRD, epic, or requirement input covering scope, approach, environments, risks, and entry/exit criteria. Use this skill when a user is starting a testing effort, planning for a feature or sprint, or asks "how should we test this?" or "we need a test plan for X" — before writing individual test cases.
 ---
 
 # Test Plan Generator

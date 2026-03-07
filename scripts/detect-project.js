@@ -39,11 +39,11 @@ try {
         detectionBudgetMs = settings.detectionBudgetMs;
     }
     if (settings.hooksEnabled === false) process.exit(0);
-} catch { /* use defaults */ }
+} catch { /* use defaults if settings.json missing or malformed */ }
 
+const verbose = process.argv.includes('--verbose');
 const configDir = path.join(projectRoot, outputDir);
 const contextPath = path.join(configDir, '.qa-context.json');
-const legacyConfigPath = path.join(configDir, '.qa-config.json');
 const stateManagerPath = path.join(pluginRoot, 'scripts', 'state-manager.js');
 
 // Detection markers
@@ -175,15 +175,17 @@ function runPhase(name, fn, timing, budgetMs) {
     const elapsed = timing.total || 0;
     if (elapsed >= budgetMs) {
         timing.phases[name] = { skipped: true, reason: 'budget_exceeded' };
+        if (verbose) console.error(`[verbose] Phase "${name}" skipped — budget exceeded (${elapsed}ms / ${budgetMs}ms)`);
         return;
     }
     const start = Date.now();
     try {
         fn();
-    } catch { /* silent failure per established pattern */ }
+    } catch { /* silent: detection phases are best-effort, never block session start */ }
     const duration = Date.now() - start;
     timing.phases[name] = { ms: duration };
     timing.total = elapsed + duration;
+    if (verbose) console.error(`[verbose] Phase "${name}" completed in ${duration}ms (total: ${elapsed + duration}ms / ${budgetMs}ms)`);
 }
 
 // ---- Workspace parsing helpers ----
@@ -388,7 +390,7 @@ runPhase('languages_frameworks', () => {
             const content = fs.readFileSync(path.join(projectRoot, 'CLAUDE.md'), 'utf8');
             const lines = content.split('\n').slice(0, 50);
             detection.existingQaConfig.claudeMdSummary = lines.join('\n');
-        } catch { }
+        } catch { /* non-critical: CLAUDE.md summary is informational only */ }
     }
 
     // Languages
@@ -429,7 +431,7 @@ runPhase('languages_frameworks', () => {
                     if (match) pyDeps.push(match[1]);
                 }
             }
-        } catch { }
+        } catch { /* skip unparseable pyproject.toml — deps detection is best-effort */ }
     }
 
     // Store deps on detection for use by Phase 2
@@ -551,7 +553,7 @@ runPhase('monorepo_workspaces', () => {
                 detection.monorepo = { tool, configFile: 'package.json', packages };
                 return;
             }
-        } catch { }
+        } catch { /* skip malformed package.json — workspace detection continues with other tools */ }
     }
 
     // Nx without package.json workspaces
@@ -578,7 +580,7 @@ runPhase('monorepo_workspaces', () => {
             const packages = resolvePackages(patterns, detectionTiming, detectionBudgetMs);
             detection.monorepo = { tool: 'lerna', configFile: 'lerna.json', packages };
             return;
-        } catch { }
+        } catch { /* skip malformed lerna.json */ }
     }
 
     // Go workspaces
@@ -631,7 +633,7 @@ runPhase('conventions_test_patterns', () => {
                     if (data.useTabs !== undefined) conventions.formatting.useTabs = data.useTabs;
                     if (data.semi !== undefined) conventions.formatting.semi = data.semi;
                     if (data.singleQuote !== undefined) conventions.formatting.singleQuote = data.singleQuote;
-                } catch { }
+                } catch { /* non-critical: prettier detected but config unreadable — tool name still useful */ }
             }
             break;
         }
@@ -646,7 +648,7 @@ runPhase('conventions_test_patterns', () => {
             const sizeMatch = content.match(/indent_size\s*=\s*(\d+)/);
             if (indentMatch) conventions.formatting.indentStyle = indentMatch[1];
             if (sizeMatch) conventions.formatting.indentSize = parseInt(sizeMatch[1]);
-        } catch { }
+        } catch { /* non-critical: editorconfig detected but content unreadable */ }
     }
 
     // Linting
@@ -681,7 +683,7 @@ runPhase('conventions_test_patterns', () => {
             const data = JSON.parse(fs.readFileSync(path.join(projectRoot, 'tsconfig.json'), 'utf8'));
             conventions.typescript.strict = data.compilerOptions?.strict || false;
             conventions.typescript.target = data.compilerOptions?.target || null;
-        } catch { }
+        } catch { /* non-critical: tsconfig detected but content unreadable — TS presence still useful */ }
     }
 
     // Test patterns
@@ -706,7 +708,7 @@ runPhase('conventions_test_patterns', () => {
                     testPatterns.namingConvention = 'pytest';
                 }
                 if (testPatterns.filePattern) break;
-            } catch { }
+            } catch { /* skip unreadable test directory */ }
         }
         conventions.testPatterns = testPatterns;
     }
@@ -754,51 +756,72 @@ projectState.detection = detection;
 projectState.conventions = conventions;
 projectState.detectionTiming = detectionTiming;
 
-// Save to .qa-context.json (atomic write)
-if (!fs.existsSync(configDir)) {
-    fs.mkdirSync(configDir, { recursive: true });
-}
-const tmpContextPath = contextPath + '.tmp';
-fs.writeFileSync(tmpContextPath, JSON.stringify(projectState, null, 2));
-fs.renameSync(tmpContextPath, contextPath);
+const dryRun = process.argv.includes('--dry-run');
 
-// Backward compat: also write legacy .qa-config.json with detection data
-const legacyConfig = {
-    ...detection,
-    detectedAt: projectState.detectedAt,
-    projectRoot,
-    outputDir,
-};
-fs.writeFileSync(legacyConfigPath, JSON.stringify(legacyConfig, null, 2));
+if (!dryRun) {
+    // Save to .qa-context.json (atomic write)
+    if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+    }
+    const tmpContextPath = contextPath + '.tmp';
+    fs.writeFileSync(tmpContextPath, JSON.stringify(projectState, null, 2));
+    fs.renameSync(tmpContextPath, contextPath);
+}
 
 // ---- Initialize session state ----
 
-let sessionStatus = 'new (first session)';
-try {
-    execFileSync('node', [stateManagerPath, 'init', 'session'], {
-        cwd: projectRoot,
-        env: { ...process.env, CLAUDE_PLUGIN_ROOT: pluginRoot },
-        encoding: 'utf8',
-        timeout: 5000,
-    });
-    const sessionsDir = path.join(configDir, 'sessions');
-    if (fs.existsSync(sessionsDir)) {
-        try {
-            const archived = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.json'));
-            if (archived.length > 0) {
-                sessionStatus = 'new (previous archived)';
-            }
-        } catch { /* ignore */ }
+let sessionStatus = dryRun ? 'dry-run (no writes)' : 'new (first session)';
+if (!dryRun) {
+    try {
+        execFileSync('node', [stateManagerPath, 'init', 'session'], {
+            cwd: projectRoot,
+            env: { ...process.env, CLAUDE_PLUGIN_ROOT: pluginRoot },
+            encoding: 'utf8',
+            timeout: 5000,
+        });
+        const sessionsDir = path.join(configDir, 'sessions');
+        if (fs.existsSync(sessionsDir)) {
+            try {
+                const archived = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.json'));
+                if (archived.length > 0) {
+                    sessionStatus = 'new (previous archived)';
+                }
+            } catch { /* ignore */ }
+        }
+    } catch (err) {
+        sessionStatus = 'init failed (non-blocking)';
     }
-} catch (err) {
-    sessionStatus = 'init failed (non-blocking)';
 }
 
 // ---- Output context ----
 
 outputContext(detection, conventions, projectState, sessionStatus);
 
-function walkDirCollect(dir, files) {
+// ---- Verbose timing summary ----
+
+if (verbose) {
+    console.error('\n[verbose] Detection timing summary:');
+    for (const [phase, info] of Object.entries(detectionTiming.phases || {})) {
+        if (info.skipped) {
+            console.error(`  ${phase}: SKIPPED (${info.reason})`);
+        } else {
+            console.error(`  ${phase}: ${info.ms}ms`);
+        }
+    }
+    console.error(`  Total: ${detectionTiming.total || 0}ms / ${detectionBudgetMs}ms budget`);
+    console.error(`  Languages: ${detection.languages.length > 0 ? detection.languages.join(', ') : '(none)'}`);
+    console.error(`  Frameworks: ${detection.frameworks.length > 0 ? detection.frameworks.join(', ') : '(none)'}`);
+    console.error(`  Test Frameworks: ${detection.testFrameworks.length > 0 ? detection.testFrameworks.join(', ') : '(none)'}`);
+    if (detection.monorepo) {
+        console.error(`  Monorepo: ${detection.monorepo.tool} (${detection.monorepo.packages.length} packages)`);
+    }
+}
+
+const MAX_WALK_DEPTH = 10;
+
+function walkDirCollect(dir, files, depth) {
+    if (depth === undefined) depth = 0;
+    if (depth >= MAX_WALK_DEPTH) return;
     let entries;
     try {
         entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -807,7 +830,7 @@ function walkDirCollect(dir, files) {
         if (entry.name.startsWith('.')) continue;
         const fullPath = path.join(dir, entry.name);
         if (entry.isDirectory()) {
-            walkDirCollect(fullPath, files);
+            walkDirCollect(fullPath, files, depth + 1);
         } else if (entry.isFile()) {
             try {
                 const stat = fs.statSync(fullPath);

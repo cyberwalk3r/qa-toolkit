@@ -38,26 +38,29 @@ if (!fs.existsSync(configDir)) {
 // Scan for recently modified artifacts (last 5 minutes)
 const recentFiles = [];
 const cutoff = Date.now() - 5 * 60 * 1000;
-const artifactDirs = [
-    'pr-reviews', 'bug-reports', 'test-cases', 'api-tests',
-    'regression-plans', 'test-data', 'a11y-audits',
-    'release-assessments', 'e2e-tests'
-];
 
-for (const dir of artifactDirs) {
-    const dirPath = path.join(configDir, dir);
-    if (!fs.existsSync(dirPath)) continue;
+function walkDir(dir, cutoff, baseDir) {
+    let entries;
     try {
-        const files = fs.readdirSync(dirPath);
-        for (const file of files) {
-            const filePath = path.join(dirPath, file);
-            const stat = fs.statSync(filePath);
-            if (stat.mtimeMs > cutoff) {
-                recentFiles.push(`${dir}/${file}`);
-            }
+        entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch { return; }
+    for (const entry of entries) {
+        if (entry.name.startsWith('.')) continue;
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            walkDir(fullPath, cutoff, baseDir);
+        } else if (entry.isFile()) {
+            try {
+                const stat = fs.statSync(fullPath);
+                if (stat.mtimeMs > cutoff) {
+                    recentFiles.push(path.relative(baseDir, fullPath));
+                }
+            } catch { /* skip unreadable files */ }
         }
-    } catch { /* skip unreadable dirs */ }
+    }
 }
+
+walkDir(configDir, cutoff, configDir);
 
 // Log task completion with details
 const entry = {

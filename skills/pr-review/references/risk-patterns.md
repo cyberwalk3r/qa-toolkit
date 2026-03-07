@@ -77,3 +77,31 @@
 - Build script changes — broken builds, missing steps
 - Dockerfile changes — image size, missing dependencies
 - Health check changes — false positives/negatives
+
+---
+
+## Dynamic Risk Enhancement
+
+Combine static patterns above with dynamic project risks from state. Static patterns provide the baseline; project state raises or adds risk flags based on actual project history.
+
+### From Project State
+
+| State Field | Match Logic | Risk Effect |
+|---|---|---|
+| `risks[]` | Match `risks[].area` against changed file paths and functional areas | Boost matching static pattern: Medium -> High, High -> Critical |
+| `coverageGaps[]` | Match `coverageGaps[].area` against changed file paths | Add risk flag: `⚠️ Coverage gap: {area}` regardless of static pattern match |
+| `detection.monorepo` | Changed files span multiple workspace packages | Add risk flag: `🔴 Cross-package change` -- changes in shared packages affect all consumers |
+
+### Priority Rules
+
+| Condition | Result |
+|---|---|
+| Changed file matches static High Risk pattern AND `risks[]` area | **Critical** -- both static and dynamic signals confirm high risk |
+| Changed file matches static pattern, NOT in `risks[]` | Use static level as-is |
+| Changed file in `risks[]` area, NO static pattern match | **Medium** risk with context: "Known risk area: {area} ({count} prior issues)" |
+| Changed file in `coverageGaps[]` area | Add `⚠️ Coverage gap` flag at any risk level |
+| Cross-package change in monorepo | Add `🔴 Cross-package change` flag at any risk level |
+
+### Cold-Start Behavior
+
+When no project state is available, use only the static patterns above. Do not generate dynamic risk flags.

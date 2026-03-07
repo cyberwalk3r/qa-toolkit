@@ -17,3 +17,6 @@ ehthumbs.db
 
 # Generated at runtime in target projects
 qa-artifacts/
+
+# GSD planning docs (local only)
+.planning/

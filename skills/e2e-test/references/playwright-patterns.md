@@ -1,67 +1,155 @@
-# Playwright Patterns & Best Practices
+# Playwright Patterns Reference
 
-## Selector Priority
-1. `data-testid` — most stable, won't break with UI changes
-2. Role-based — `page.getByRole('button', { name: 'Submit' })`
-3. Label-based — `page.getByLabel('Email')` for form fields
-4. Text-based — `page.getByText('Welcome')` for content
-5. CSS selectors — last resort, most fragile
+Advanced patterns for convention-grounded E2E test generation. Generic Playwright API knowledge is assumed -- this file covers non-obvious patterns and project-matching guidance.
 
-## Waiting Strategies
-```javascript
-// ✅ Good — wait for specific element
-await page.waitForSelector('[data-testid="results"]');
+## Fixture Integration with test.extend
 
-// ✅ Good — wait for network to settle
-await page.waitForLoadState('networkidle');
+When convention scan detects `fixturePattern: "custom"`, generate tests using `test.extend<>` instead of bare `{ page }`.
 
-// ✅ Good — wait for navigation
-await Promise.all([
-  page.waitForNavigation(),
-  page.click('[data-testid="submit"]')
-]);
+### Detecting Existing Fixtures
 
-// ❌ Bad — hard-coded wait
-await page.waitForTimeout(3000);
+Look for a `fixtures.ts` or `fixtures.js` file in:
+- Root test directory (e.g., `tests/fixtures.ts`)
+- Alongside test files in the same directory
+- Imported in existing test files (trace the import path)
+
+If found, import from the existing file. If not, scaffold a new one.
+
+### Fixture Pattern (TypeScript)
+
+```typescript
+// fixtures.ts
+import { test as base } from '@playwright/test';
+import { LoginPage } from './pages/LoginPage';
+import { DashboardPage } from './pages/DashboardPage';
+
+type Fixtures = {
+  loginPage: LoginPage;
+  dashboardPage: DashboardPage;
+};
+
+export const test = base.extend<Fixtures>({
+  loginPage: async ({ page }, use) => {
+    await use(new LoginPage(page));
+  },
+  dashboardPage: async ({ page }, use) => {
+    await use(new DashboardPage(page));
+  },
+});
+
+export { expect } from '@playwright/test';
 ```
 
-## Page Object Model
-```javascript
-// pages/LoginPage.js
-class LoginPage {
-  constructor(page) {
+```typescript
+// login.spec.ts -- consuming fixtures
+import { test, expect } from './fixtures';
+
+test('user can log in', async ({ loginPage, dashboardPage }) => {
+  await loginPage.goto();
+  await loginPage.login('user@example.com', 'password');
+  await expect(dashboardPage.heading).toHaveText('Welcome');
+});
+```
+
+### Adding to Existing Fixtures
+
+When scaffolding a new page object that should integrate with existing fixtures:
+1. Show the type addition to the `Fixtures` type
+2. Show the fixture registration in `test.extend<>()`
+3. Note: "Add this to your existing fixtures.ts"
+
+## Page Object Best Practices
+
+### Constructor Locator Pattern
+
+Define locators in the constructor so they are resolved lazily (not eagerly awaited):
+
+```typescript
+class CheckoutPage {
+  readonly page: Page;
+  readonly cartItems: Locator;
+  readonly totalPrice: Locator;
+  readonly checkoutButton: Locator;
+
+  constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.getByLabel('Email');
-    this.passwordInput = page.getByLabel('Password');
-    this.submitButton = page.getByRole('button', { name: 'Sign in' });
+    this.cartItems = page.getByTestId('cart-item');
+    this.totalPrice = page.getByTestId('total-price');
+    this.checkoutButton = page.getByRole('button', { name: 'Checkout' });
   }
 
-  async login(email, password) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.submitButton.click();
+  async addItem(name: string) {
+    await this.page.getByRole('button', { name: `Add ${name}` }).click();
+  }
+
+  async getItemCount(): Promise<number> {
+    return this.cartItems.count();
   }
 }
 ```
 
-## Common Assertions
-```javascript
-// Element visibility
-await expect(page.locator('.success')).toBeVisible();
-await expect(page.locator('.error')).not.toBeVisible();
+### Method Naming
 
-// Text content
-await expect(page.locator('h1')).toHaveText('Dashboard');
-await expect(page.locator('.count')).toContainText('42');
+- Actions: verb-first (`login`, `addItem`, `submitForm`, `navigateTo`)
+- Getters: `get` prefix (`getItemCount`, `getErrorMessage`)
+- Navigation: `goto` for initial navigation, no prefix for in-page navigation
+- Match existing POM method naming when reusing or extending
 
-// URL
-await expect(page).toHaveURL(/.*dashboard/);
+### Selector Choice in POMs
 
-// Input value
-await expect(page.getByLabel('Name')).toHaveValue('Alice');
+Match the project's detected `selectorStrategy`:
+- `data-testid`: use `page.getByTestId('...')`
+- `role-based`: use `page.getByRole('...', { name: '...' })`
+- `label-based`: use `page.getByLabel('...')`
+- `css`: use `page.locator('.class')` (least preferred)
+
+## Test Organization Patterns
+
+Match the project's detected `organizationPattern`:
+
+### describe + beforeEach
+
+```typescript
+test.describe('Feature: Shopping Cart', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/shop');
+  });
+
+  test('can add item to cart', async ({ page }) => { /* ... */ });
+  test('can remove item from cart', async ({ page }) => { /* ... */ });
+});
 ```
 
+### test.step for Complex Flows
+
+```typescript
+test('complete checkout flow', async ({ page }) => {
+  await test.step('Add items to cart', async () => {
+    await page.getByTestId('add-item-1').click();
+    await page.getByTestId('add-item-2').click();
+  });
+
+  await test.step('Proceed to checkout', async () => {
+    await page.getByRole('button', { name: 'Checkout' }).click();
+    await expect(page).toHaveURL(/.*checkout/);
+  });
+});
+```
+
+## Waiting Strategies
+
+Prefer explicit waits over implicit ones. Never use `page.waitForTimeout()`.
+
+| Scenario | Pattern |
+|---|---|
+| Element appears | `await expect(locator).toBeVisible()` |
+| Navigation completes | `await page.waitForURL('**/dashboard')` |
+| Network settles | `await page.waitForLoadState('networkidle')` |
+| API response | `await page.waitForResponse(url => url.includes('/api/data'))` |
+| Element disappears | `await expect(locator).not.toBeVisible()` |
+
 ## CI/CD Config (GitHub Actions)
+
 ```yaml
 name: E2E Tests
 on: [push, pull_request]

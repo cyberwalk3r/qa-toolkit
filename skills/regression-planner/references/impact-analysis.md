@@ -35,3 +35,33 @@ Changes to leaf-node code:
 - **First-time contributor** — 1.5× risk
 - **Large diff** (>500 lines) — 2× risk
 - **No test changes** with code changes — 2× risk
+
+## State-Driven Prioritization
+
+When project or session state is available, apply these additional prioritization rules on top of the file-based heuristics above.
+
+### From Project State
+
+**Risk area boost:** If an impact area matches a known `risks[]` entry, boost its risk level by one tier (Low -> Medium, Medium -> High). High stays High.
+
+**Coverage gap flagging:** If an impact area matches a `coverageGaps[]` entry, flag it with "Coverage gap -- prioritize testing" and boost one tier.
+
+**Monorepo cross-package multiplier:** When `detection.monorepo` is present, any change crossing package boundaries gets a 2x risk multiplier. Add to the Risk Multipliers table above:
+
+| Additional Multiplier | Condition |
+|---|---|
+| **Cross-package change** (monorepo) | 2x risk |
+
+### From Session State
+
+**Prior pr-review findings:** If a prior `pr-review` skillHistory entry is found in session state:
+- Seed impact analysis with its `affectedAreas` as starting points instead of relying only on file-based mapping
+- Boost risk of areas matching its `riskFlags`
+- If its `riskLevel` is "high" or "critical", default recommended scope to "standard" minimum (skip "quick")
+
+**Prior bug-report findings:** If a prior `bug-report` skillHistory entry is found in session state:
+- Boost risk for its `component` area by one tier
+
+### Cold-Start Behavior
+
+When no project or session state is available, use only the file-based impact mapping and risk multipliers above.

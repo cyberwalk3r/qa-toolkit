@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 
-const SCRIPT = path.join(__dirname, 'state-manager.js');
+const SCRIPT = path.join(__dirname, '..', 'scripts', 'state-manager.js');
 const TEST_DIR = path.join(__dirname, '..', '__test_tmp__');
 const QA_DIR = path.join(TEST_DIR, 'qa-artifacts');
 const PROJECT_STATE = path.join(QA_DIR, '.qa-context.json');

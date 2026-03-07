@@ -170,3 +170,10 @@ try {
 } catch (err) {
     console.error(`Failed to log activity: ${err.message}`);
 }
+
+// ---- Summary output ----
+
+const summaryParts = ['[QA Toolkit] Session ended.'];
+if (findingsCount > 0) summaryParts.push(`Findings promoted: ${findingsCount}`);
+if (typeof recentFiles !== 'undefined' && recentFiles.length > 0) summaryParts.push(`Artifacts modified: ${recentFiles.length}`);
+console.log(summaryParts.join(' '));

@@ -198,9 +198,40 @@ qa-artifacts/
 
 ---
 
+## Advanced: State Management
+
+Skills and hooks use `scripts/state-manager.js` to read and write QA state. You can also use it directly to inspect or modify state.
+
+```bash
+# Read full project or session state
+node scripts/state-manager.js read project
+node scripts/state-manager.js read session
+
+# Read a specific field
+node scripts/state-manager.js read project risks
+node scripts/state-manager.js read session featureUnderTest
+
+# Write a field (replaces value; appends for session findings/skillHistory)
+node scripts/state-manager.js write session featureUnderTest '"login flow"'
+node scripts/state-manager.js write session findings '{"type":"bug","area":"auth"}'
+
+# Merge into an array field (deduplicates by key)
+node scripts/state-manager.js merge project risks '{"area":"auth","severity":"high"}'
+
+# Initialize a fresh session (archives existing if it has content)
+node scripts/state-manager.js init session
+
+# Archive current session to qa-artifacts/sessions/
+node scripts/state-manager.js archive session
+```
+
+State files: `qa-artifacts/.qa-context.json` (project), `qa-artifacts/.qa-session.json` (session). Both use atomic writes and schema versioning.
+
+---
+
 ## Permissions & Side Effects
 
-The plugin ships a `.claude/settings.local.json` that pre-approves the following permissions:
+On first use, Claude Code will prompt you to approve each permission the plugin needs. You can approve, deny, or revoke permissions at any time. The plugin requires:
 
 | Permission | Used by |
 |------------|---------|
@@ -214,15 +245,20 @@ The plugin ships a `.claude/settings.local.json` that pre-approves the following
 | `Bash(node scripts/session-hook.js:*)` | Stop hook — session archiving and activity log |
 | `Bash(node scripts/state-manager.js:*)` | All skills — reading and writing QA state |
 
-You'll see these listed when you install the plugin and can revoke them at any time.
+**No network access.** All scripts use Node.js stdlib only — zero external dependencies, zero network calls.
 
 **Automatic behavior:**
-- **Session start:** Scans project marker files (languages, frameworks, test tools, CI/CD), reads the first 50 lines of `CLAUDE.md` if present (to detect project conventions), writes `qa-artifacts/.qa-context.json`. No network calls.
-- **Session end:** Promotes session findings to project state, archives the session, logs which artifacts were created/modified to `qa-artifacts/.qa-activity.log`. No network calls.
+- **Session start:** Scans project marker files (languages, frameworks, test tools, CI/CD), reads the first 50 lines of `CLAUDE.md` if present (to detect project conventions), writes `qa-artifacts/.qa-context.json`.
+- **Session end:** Promotes session findings to project state, archives the session, logs which artifacts were created/modified to `qa-artifacts/.qa-activity.log`.
 
 **Output directory:** All artifacts are written to `qa-artifacts/` in your project root. This directory is runtime-generated and should be gitignored — add `qa-artifacts/` to your project's `.gitignore` if you don't want to commit QA artifacts.
 
-**To disable hooks** without removing the plugin:
+**Preview detection without writing files:**
+```bash
+node scripts/detect-project.js --dry-run
+```
+
+**To disable hooks** without removing the plugin, set `hooksEnabled` to `false` in `settings.json`:
 ```json
 {
     "agent": "qa-reviewer",
@@ -243,7 +279,7 @@ claude plugin add github:cyberwalk3r/qa-toolkit
 claude plugin add ./qa-toolkit
 ```
 
-The plugin ships with `.claude/settings.local.json` that pre-approves its own hook scripts and read-only git commands so everything works on first use without confirmation prompts. See the [Permissions & Side Effects](#permissions--side-effects) section for the full list.
+On first use, Claude Code will prompt you to approve the plugin's hook scripts and read-only git commands. See the [Permissions & Side Effects](#permissions--side-effects) section for the full list.
 
 ---
 

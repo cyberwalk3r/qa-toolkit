@@ -77,10 +77,18 @@ agents/<agent-name>.md        # Required: agent definition with frontmatter
 ## Testing
 
 ```bash
+# Run tests
 node --test tests/*.test.js
+
+# Validate skill registration budget (must stay under 16K chars)
+node scripts/validate-skill-budget.js
 ```
 
-Tests use Node.js built-in test runner (zero dependencies). When adding a skill or modifying a script, add or update the corresponding test in `tests/`.
+Both run in CI on Node 18/20/22. Tests use Node.js built-in test runner (zero dependencies). When adding a skill or modifying a script, add or update the corresponding test in `tests/`.
+
+### Skill budget
+
+The combined character count of all skill `name` + `description` frontmatter fields must stay under 16,000 characters (Claude Code registration limit). Run `node scripts/validate-skill-budget.js` to check. The `--json` flag produces machine-readable output for CI.
 
 ## Local Development
 
@@ -89,6 +97,14 @@ claude --debug --plugin-dir ./qa-toolkit
 ```
 
 The `--debug` flag shows hook execution and skill loading in the Claude Code output.
+
+### Preview detection
+
+To see what the SessionStart hook would detect without writing any files:
+
+```bash
+node scripts/detect-project.js --dry-run
+```
 
 ---
 

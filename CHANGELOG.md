@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.1] — 2026-03-07
+
+### Added
+- `--dry-run` flag for `detect-project.js` — preview detection without writing files
+- Session end summary output showing promoted findings and modified artifact count
+- Skill budget validation (`validate-skill-budget.js`) added to CI pipeline
+- GitHub Pages documentation site (`docs/`)
+
+### Changed
+- Removed `.claude/settings.local.json` — plugins should not ship user-local settings; permissions are approved interactively on first use
+- Moved test files from `scripts/` to `tests/` directory
+
+### Fixed
+- README "Permissions & Side Effects" section now accurately describes interactive approval (not pre-approved settings)
+
 ## [2.0.0] — 2026-03-06
 
 QA Toolkit v2.0 is a ground-up rethink of how the plugin operates. The core idea: every skill now reads your project state before producing output, so artifacts build on each other rather than starting cold every time.

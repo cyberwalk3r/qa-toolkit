@@ -753,35 +753,41 @@ projectState.detection = detection;
 projectState.conventions = conventions;
 projectState.detectionTiming = detectionTiming;
 
-// Save to .qa-context.json (atomic write)
-if (!fs.existsSync(configDir)) {
-    fs.mkdirSync(configDir, { recursive: true });
+const dryRun = process.argv.includes('--dry-run');
+
+if (!dryRun) {
+    // Save to .qa-context.json (atomic write)
+    if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+    }
+    const tmpContextPath = contextPath + '.tmp';
+    fs.writeFileSync(tmpContextPath, JSON.stringify(projectState, null, 2));
+    fs.renameSync(tmpContextPath, contextPath);
 }
-const tmpContextPath = contextPath + '.tmp';
-fs.writeFileSync(tmpContextPath, JSON.stringify(projectState, null, 2));
-fs.renameSync(tmpContextPath, contextPath);
 
 // ---- Initialize session state ----
 
-let sessionStatus = 'new (first session)';
-try {
-    execFileSync('node', [stateManagerPath, 'init', 'session'], {
-        cwd: projectRoot,
-        env: { ...process.env, CLAUDE_PLUGIN_ROOT: pluginRoot },
-        encoding: 'utf8',
-        timeout: 5000,
-    });
-    const sessionsDir = path.join(configDir, 'sessions');
-    if (fs.existsSync(sessionsDir)) {
-        try {
-            const archived = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.json'));
-            if (archived.length > 0) {
-                sessionStatus = 'new (previous archived)';
-            }
-        } catch { /* ignore */ }
+let sessionStatus = dryRun ? 'dry-run (no writes)' : 'new (first session)';
+if (!dryRun) {
+    try {
+        execFileSync('node', [stateManagerPath, 'init', 'session'], {
+            cwd: projectRoot,
+            env: { ...process.env, CLAUDE_PLUGIN_ROOT: pluginRoot },
+            encoding: 'utf8',
+            timeout: 5000,
+        });
+        const sessionsDir = path.join(configDir, 'sessions');
+        if (fs.existsSync(sessionsDir)) {
+            try {
+                const archived = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.json'));
+                if (archived.length > 0) {
+                    sessionStatus = 'new (previous archived)';
+                }
+            } catch { /* ignore */ }
+        }
+    } catch (err) {
+        sessionStatus = 'init failed (non-blocking)';
     }
-} catch (err) {
-    sessionStatus = 'init failed (non-blocking)';
 }
 
 // ---- Output context ----

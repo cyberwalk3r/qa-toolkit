@@ -15,6 +15,9 @@ Thumbs.db
 desktop.ini
 ehthumbs.db
 
+# Claude Code user settings (not part of the plugin)
+.claude/
+
 # Generated at runtime in target projects
 qa-artifacts/
 

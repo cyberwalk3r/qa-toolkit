@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "Claude Code plugin with 15 QA skills and 3 agent personas. PR reviews, test cases, bug reports, regression plans, coverage gaps, risk analysis, and more. Auto-detects your tech stack.",
   "author": {
-    "name": "QA Skills"
+    "name": "cyberwalk3r"
   },
   "repository": {
     "type": "git",

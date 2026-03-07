@@ -121,10 +121,27 @@ try {
 
 // ---- 3. Log activity (absorbs save-artifact.js functionality) ----
 
+const MAX_LOG_BYTES = 512 * 1024; // 512 KB
+
 try {
     if (!fs.existsSync(configDir)) {
         fs.mkdirSync(configDir, { recursive: true });
     }
+
+    // Rotate log if it exceeds size cap
+    try {
+        if (fs.existsSync(logPath)) {
+            const stat = fs.statSync(logPath);
+            if (stat.size > MAX_LOG_BYTES) {
+                const content = fs.readFileSync(logPath, 'utf8');
+                const lines = content.split('\n');
+                // Keep the most recent half of lines
+                const keepFrom = Math.floor(lines.length / 2);
+                const rotated = '--- log rotated ---\n' + lines.slice(keepFrom).join('\n');
+                fs.writeFileSync(logPath, rotated);
+            }
+        }
+    } catch { /* rotation failure is non-blocking */ }
 
     // Scan for recently modified artifacts (last 5 minutes)
     const recentFiles = [];

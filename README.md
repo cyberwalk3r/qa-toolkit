@@ -22,13 +22,11 @@ claude plugin add github:cyberwalk3r/qa-toolkit
 
 ---
 
-## Why I Built This
+## Motivation
 
 QA work is repetitive in the worst way. Every bug report needs the same structure. Every PR review needs the same checks. Every regression plan needs the same risk analysis. And every team member does it differently.
 
-I wanted a tool that handles the formatting so you can focus on the judgment. Describe what you're testing in plain English — get back something you can actually use.
-
-So I built QA Toolkit. It auto-detects your stack, remembers your project context, and produces consistent QA artifacts every time. Whether you're a dedicated QA lead or a developer wearing the QA hat, it adapts to your stack and your tracker without asking you to configure anything.
+QA Toolkit handles the formatting so you can focus on the judgment. Describe what you're testing in plain English — get back something you can actually use. It auto-detects your stack, remembers your project context, and produces consistent QA artifacts every time. Whether you're a dedicated QA lead or a developer wearing the QA hat, it adapts to your stack and your tracker without asking you to configure anything.
 
 ---
 
@@ -144,55 +142,73 @@ Agents remember context across the conversation. The more you share, the sharper
 
 ---
 
-## What's New in v2.0
-
-**State-aware skills.** Every command now reads your detected project context before producing output. It knows you're using Jest, not Pytest. It knows your CI is GitHub Actions. It knows what artifacts you've already generated this session.
-
-**15 skills** (up from 10). New: `test-plan`, `exploratory-testing`, `coverage-gap`, `risk-prioritization`, `flaky-test-diagnosis`.
-
-**Redesigned agents.** `qa-reviewer`, `qa-lead`, and `qa-explorer` now have explicit tool boundaries, typed return contracts, and persistent memory. Their behavior is predictable and composable.
-
----
-
 ## Output
 
-Everything saves to `qa-artifacts/` in your project root (configurable via `settings.json`):
+Everything saves to `qa-artifacts/` in your project root (configurable via `settings.json`).
+
+### settings.json
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `agent` | string | `"qa-reviewer"` | Default agent persona for interactive sessions |
+| `outputDir` | string | `"qa-artifacts"` | Output directory (relative path, no `..`) |
+| `hooksEnabled` | boolean | `true` | Enable/disable SessionStart and Stop hooks |
+| `detectionBudgetMs` | number | `500` | Time budget (ms) for project auto-detection phases |
+
+### Artifact structure
 
 ```
 qa-artifacts/
 ├── .qa-context.json         # Auto-detected project config and session state
 ├── .qa-activity.log         # Session activity log
-├── pr-reviews/
-├── bug-reports/
-├── test-cases/
-├── test-plans/
-├── api-tests/
-├── regression-plans/
-├── test-data/
 ├── a11y-audits/
-├── release-assessments/
+├── api-tests/
+├── bug-reports/
+├── coverage-analysis/
 ├── e2e-tests/
-├── coverage-gaps/
-├── risk-analyses/
-└── flaky-diagnoses/
+├── exploratory/
+├── flaky-diagnosis/
+├── pr-reviews/
+├── regression-plans/
+├── release-assessments/
+├── risk-analysis/
+├── test-cases/
+├── test-data/
+└── test-plans/
 ```
 
 ### .qa-context.json Schema
 
+Top-level fields:
+
 | Field | Type | Description |
 |-------|------|-------------|
-| `detectedAt` | string | ISO 8601 timestamp |
+| `schemaVersion` | number | Schema version (currently `1`) |
+| `detectedAt` | string | ISO 8601 timestamp of last detection |
 | `projectRoot` | string | Absolute path to project directory |
 | `outputDir` | string | Configured output directory name |
-| `languages` | string[] | Detected languages |
-| `frameworks` | string[] | Detected frameworks |
-| `testFrameworks` | string[] | Detected test tools |
-| `cicd` | string[] | Detected CI/CD systems |
-| `packageManager` | string\|null | Detected package manager |
-| `hasClaudeMd` | boolean | Whether CLAUDE.md exists |
-| `hasReadme` | boolean | Whether README.md exists |
-| `existingDocs` | object[] | Detected documentation files |
-| `existingTestDirs` | string[] | Detected test directories |
+| `detection` | object | Auto-detected project info (see below) |
+| `conventions` | object | Formatting, linting, TypeScript, test patterns |
+| `detectionTiming` | object | Phase timing and budget data |
+| `risks` | object[] | Accumulated risk findings across sessions |
+| `coverageGaps` | object[] | Accumulated coverage gap findings |
+| `testingConventions` | object[] | Project testing conventions |
+| `historicalFindings` | object | Session counts, bugs reported, areas reviewed |
+
+`detection` sub-fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `detection.languages` | string[] | Detected languages |
+| `detection.frameworks` | string[] | Detected frameworks |
+| `detection.testFrameworks` | string[] | Detected test tools |
+| `detection.cicd` | string[] | Detected CI/CD systems |
+| `detection.packageManager` | string\|null | Detected package manager |
+| `detection.hasClaudeMd` | boolean | Whether CLAUDE.md exists |
+| `detection.hasReadme` | boolean | Whether README.md exists |
+| `detection.existingDocs` | object[] | Detected documentation files |
+| `detection.existingTestDirs` | string[] | Detected test directories |
+| `detection.monorepo` | object\|null | Workspace tool, config file, packages |
 
 **Note:** `projectRoot` is machine-specific — don't commit `.qa-context.json` to version control. Delete it to force re-detection.
 
@@ -244,11 +260,12 @@ On first use, Claude Code will prompt you to approve each permission the plugin 
 | `Bash(node scripts/detect-project.js:*)` | SessionStart hook — project detection |
 | `Bash(node scripts/session-hook.js:*)` | Stop hook — session archiving and activity log |
 | `Bash(node scripts/state-manager.js:*)` | All skills — reading and writing QA state |
+| `Bash(npx playwright test:*)` | e2e-test skill — runs generated Playwright tests (user-initiated only) |
 
 **No network access.** All scripts use Node.js stdlib only — zero external dependencies, zero network calls.
 
 **Automatic behavior:**
-- **Session start:** Scans project marker files (languages, frameworks, test tools, CI/CD), reads the first 50 lines of `CLAUDE.md` if present (to detect project conventions), writes `qa-artifacts/.qa-context.json`.
+- **Session start:** Scans project marker files (languages, frameworks, test tools, CI/CD), writes `qa-artifacts/.qa-context.json`. If `CLAUDE.md` exists, reads the first 50 lines to detect project conventions (stored in `.qa-context.json` as `detection.existingQaConfig.claudeMdSummary` — no content is sent externally).
 - **Session end:** Promotes session findings to project state, archives the session, logs which artifacts were created/modified to `qa-artifacts/.qa-activity.log`.
 
 **Output directory:** All artifacts are written to `qa-artifacts/` in your project root. This directory is runtime-generated and should be gitignored — add `qa-artifacts/` to your project's `.gitignore` if you don't want to commit QA artifacts.
@@ -280,6 +297,16 @@ claude plugin add ./qa-toolkit
 ```
 
 On first use, Claude Code will prompt you to approve the plugin's hook scripts and read-only git commands. See the [Permissions & Side Effects](#permissions--side-effects) section for the full list.
+
+---
+
+## Detection Limitations
+
+Auto-detection uses lightweight marker-file scanning with a configurable time budget (default 500ms). Phases that exceed the budget are skipped gracefully. Known limitations:
+
+- **Workspace config parsing** (`pnpm-workspace.yaml`, `Cargo.toml` workspaces, `go.work`, `pyproject.toml`) uses simplified regex-based parsers. Unusual formatting (inline comments, multi-line strings) may not be recognized. If detection misses your monorepo layout, run `/qa-toolkit:setup` to correct it manually.
+- **Glob-based language detection** (e.g., `*.csproj`) scans up to 3 directory levels deep. Deeply nested projects may not be detected.
+- **Activity log rotation** triggers at 512 KB, keeping the most recent half of entries. Long-running projects won't accumulate unbounded log files.
 
 ---
 

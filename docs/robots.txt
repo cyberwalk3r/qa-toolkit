@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cyberwalk3r.github.io/qa-toolkit/sitemap.xml
